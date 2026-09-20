@@ -2,6 +2,7 @@ import { useState } from 'react'
 import styles from './App.module.css'
 
 type TableStatus = 'Ocupada' | 'Disponible' | 'Reservada'
+type UserRole = 'Mozo' | 'Recepcionista' | 'Cocinero' | 'Repartidor' | 'Administrador'
 type RestaurantTable = { number: string; seats: number; status: TableStatus; time?: string; amount?: string; guest?: string }
 
 const tables: RestaurantTable[] = [
@@ -23,13 +24,128 @@ const orderItems = [
 
 const icon = (symbol: string) => <span aria-hidden="true" className={styles.icon}>{symbol}</span>
 
-function LoginScreen({ onLogin }: { onLogin: () => void }) {
+const waiterTables = [
+  { number: 1, status: 'Ocupada', elapsed: 'Superó 20 min', amount: '$ 78.00' },
+  { number: 2, status: 'Libre' },
+  { number: 3, status: 'Libre' },
+  { number: 4, status: 'Libre' },
+  { number: 5, status: 'Libre' },
+  { number: 6, status: 'Libre' },
+  { number: 7, status: 'Libre' },
+  { number: 8, status: 'Libre' },
+]
+
+type MenuItem = { name: string; description: string; price: number }
+type MenuCategory = { name: string; items: MenuItem[] }
+
+const menuCategories: MenuCategory[] = [
+  { name: 'Combos broaster', items: [
+    { name: '1/4 Pollo Broaster Clásico', description: 'Pollo crujiente, papas fritas y ensalada fresca', price: 24 },
+    { name: '1/2 Pollo Broaster Familiar', description: 'Medio pollo crocante, papas, ensalada y cremas', price: 42 },
+    { name: 'Pollo Broaster Entero', description: 'Pollo entero dorado con papas familiares y ensalada', price: 78 },
+    { name: 'Combo Tiras Crocantes', description: 'Tiras de pollo, papas fritas, ensalada y crema de la casa', price: 22 },
+  ] },
+  { name: 'Especialidades', items: [
+    { name: 'Alitas BBQ Crocantes', description: 'Alitas doradas bañadas en salsa BBQ y papas fritas', price: 23 },
+    { name: 'Hamburguesa de Pollo Crispy', description: 'Filete crispy, queso, lechuga, tomate y papas', price: 21 },
+  ] },
+  { name: 'Acompañamientos', items: [
+    { name: 'Porción de Papas Fritas', description: 'Papas doradas con ketchup y mayonesa de la casa', price: 9 },
+    { name: 'Ensalada Fresca', description: 'Lechuga, tomate, pepino y aderezo de la casa', price: 8 },
+  ] },
+  { name: 'Bebidas', items: [
+    { name: 'Gaseosa Inka Kola 500 ml', description: 'Gaseosa personal bien fría', price: 6 },
+    { name: 'Chicha Morada de la Casa', description: 'Vaso de chicha morada natural con canela y limón', price: 7 },
+    { name: 'Maracuyá Frozen', description: 'Bebida frozen de maracuyá preparada al momento', price: 10 },
+  ] },
+  { name: 'Postres', items: [
+    { name: 'Brownie con Helado', description: 'Brownie tibio de chocolate con helado de vainilla', price: 14 },
+  ] },
+]
+
+function formatPrice(price: number) {
+  return `S/ ${price.toFixed(2)}`
+}
+
+function WaiterOrderView({ tableNumber, onBack }: { tableNumber: number; onBack: () => void }) {
+  const [customerName, setCustomerName] = useState('')
+  const [cart, setCart] = useState<Record<string, number>>({})
+  const cartItems = menuCategories.flatMap((category) => category.items).filter((item) => cart[item.name])
+  const total = cartItems.reduce((sum, item) => sum + item.price * cart[item.name], 0)
+
+  const addItem = (item: MenuItem) => setCart((current) => ({ ...current, [item.name]: (current[item.name] ?? 0) + 1 }))
+
+  return (
+    <div className={styles.waiterShell}>
+      <header className={styles.waiterHeader}>
+        <div className={styles.waiterBrand}><span className={styles.waiterLogo}>{icon('♧')}</span><div><strong>El Viejo Madero</strong><small>Mozo · Carlos Ramos</small></div></div>
+        <button className={styles.logoutButton} onClick={onBack}>{icon('↪')} Salir</button>
+      </header>
+      <main className={styles.orderContent}>
+        <button className={styles.backButton} onClick={onBack}>{icon('←')} Volver</button>
+        <div className={styles.orderTitle}><h1>Mesa {tableNumber}</h1><span>Salón</span></div>
+        <label className={styles.customerField}>Nombre del cliente<input value={customerName} onChange={(event) => setCustomerName(event.target.value)} placeholder="Ej. Juan Pérez" /></label>
+        <div className={styles.orderLayout}>
+          <div className={styles.menuList}>{menuCategories.map((category) => <section key={category.name} className={styles.menuCategory}><h2>{category.name}</h2>{category.items.map((item) => <button className={styles.menuItem} key={item.name} onClick={() => addItem(item)}><span><strong>{item.name}</strong><small>{item.description}</small></span><b>{formatPrice(item.price)}</b><em>+</em></button>)}</section>)}</div>
+          <aside className={styles.cartPanel}><h2>Pedido</h2>{cartItems.length === 0 ? <p className={styles.emptyCart}>Aún no agregaste platos. Toca un plato para añadirlo.</p> : <div className={styles.cartItems}>{cartItems.map((item) => <div className={styles.cartItem} key={item.name}><span>{cart[item.name]}x</span><strong>{item.name}</strong><b>{formatPrice(item.price * cart[item.name])}</b></div>)}</div>}<div className={styles.cartTotal}><span>Total</span><strong>{formatPrice(total)}</strong></div></aside>
+        </div>
+      </main>
+      <footer className={styles.orderFooter}><span>Puedes editar el pedido antes de enviarlo. Total <strong>{formatPrice(total)}</strong></span><button disabled={cartItems.length === 0}>{icon('♜')} Confirmar y enviar a cocina</button></footer>
+    </div>
+  )
+}
+
+function WaiterView({ onLogout }: { onLogout: () => void }) {
+  const [tableFilter, setTableFilter] = useState<'Todas' | 'Ocupadas' | 'Libres'>('Todas')
+  const [selectedTable, setSelectedTable] = useState<number | null>(null)
+  const visibleTables = waiterTables.filter((table) => tableFilter === 'Todas' || table.status === tableFilter.slice(0, -1))
+
+  if (selectedTable !== null) return <WaiterOrderView tableNumber={selectedTable} onBack={() => setSelectedTable(null)} />
+
+  return (
+    <div className={styles.waiterShell}>
+      <header className={styles.waiterHeader}>
+        <div className={styles.waiterBrand}>
+          <span className={styles.waiterLogo}>{icon('♧')}</span>
+          <div><strong>El Viejo Madero</strong><small>Mozo · Carlos Ramos</small></div>
+        </div>
+        <button className={styles.logoutButton} onClick={onLogout}>{icon('↪')} Salir</button>
+      </header>
+      <main className={styles.waiterContent}>
+        <section className={styles.waiterIntro}>
+          <h1>Mozo</h1>
+          <p>Entrega los platos listos, atiende las mesas y toma nuevos pedidos.</p>
+        </section>
+        <section className={styles.readySection} aria-labelledby="ready-title">
+          <div className={styles.waiterSectionTitle}><span className={styles.readyIcon}>{icon('♧')}</span><h2 id="ready-title">Listos para entregar</h2><span className={styles.countBadge}>0</span></div>
+          <div className={styles.emptyReady}>No hay platos listos en cocina por ahora.</div>
+        </section>
+        <section className={styles.tablesSection} aria-labelledby="tables-title">
+          <div className={styles.tablesHeading}>
+            <div><div className={styles.waiterSectionTitle}><span className={styles.tablesIcon}>{icon('▣')}</span><h2 id="tables-title">Mesas del salón</h2></div><p>Toca una mesa libre para tomar un pedido, u ocupada para ver su consumo.</p></div>
+            <div className={styles.waiterFilters}>{(['Todas', 'Ocupadas', 'Libres'] as const).map((item) => <button key={item} className={tableFilter === item ? styles.waiterFilterActive : ''} onClick={() => setTableFilter(item)}>{item}</button>)}</div>
+          </div>
+          <div className={styles.waiterTableGrid}>{visibleTables.map((table) => <button key={table.number} className={`${styles.waiterTableCard} ${table.status === 'Ocupada' ? styles.waiterOccupied : ''}`} onClick={() => setSelectedTable(table.number)}><span className={styles.chairIcon}>{icon('▱')}</span><strong>Mesa {table.number}</strong><span className={`${styles.waiterStatus} ${table.status === 'Ocupada' ? styles.occupiedStatus : ''}`}>{table.status}</span>{table.elapsed && <span className={styles.elapsed}>{icon('◷')} {table.elapsed}</span>}{table.amount && <span className={styles.waiterAmount}>{table.amount}</span>}</button>)}</div>
+        </section>
+      </main>
+    </div>
+  )
+}
+
+function LoginScreen({ onLogin }: { onLogin: (role: UserRole) => void }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    onLogin()
+    const roleByUsername: Record<string, UserRole> = {
+      mozo: 'Mozo',
+      recepcion: 'Recepcionista',
+      cocina: 'Cocinero',
+      reparto: 'Repartidor',
+      admin: 'Administrador',
+    }
+    onLogin(roleByUsername[username.toLowerCase()] ?? 'Mozo')
   }
 
   return (
@@ -66,13 +182,15 @@ function App() {
   const [filter, setFilter] = useState<'Todas' | TableStatus>('Todas')
   const [query, setQuery] = useState('')
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [userRole, setUserRole] = useState<UserRole>('Mozo')
   const visibleTables = tables.filter((table) => {
     const matchesFilter = filter === 'Todas' || table.status === filter
     const matchesQuery = table.number.includes(query) || table.guest?.toLowerCase().includes(query.toLowerCase())
     return matchesFilter && (query === '' || matchesQuery)
   })
 
-  if (!isAuthenticated) return <LoginScreen onLogin={() => setIsAuthenticated(true)} />
+  if (!isAuthenticated) return <LoginScreen onLogin={(role) => { setUserRole(role); setIsAuthenticated(true) }} />
+  if (userRole === 'Mozo') return <WaiterView onLogout={() => setIsAuthenticated(false)} />
 
   return (
     <div className={styles.appShell}>
@@ -91,7 +209,7 @@ function App() {
       </aside>
 
       <main className={styles.mainContent}>
-        <header className={styles.topbar}><button className={styles.mobileMenu} aria-label="Abrir menú">☰</button><div className={styles.breadcrumb}><span>Restaurante</span><i>/</i><strong>{activeSection}</strong></div><div className={styles.topbarActions}><button className={styles.iconButton} aria-label="Notificaciones">♧<span className={styles.notificationDot}></span></button><div className={styles.profile}><span className={styles.avatar}>MR</span><div><strong>Mateo Rodríguez</strong><small>Mozo</small></div><span className={styles.chevron}>⌄</span></div></div></header>
+        <header className={styles.topbar}><button className={styles.mobileMenu} aria-label="Abrir menú">☰</button><div className={styles.breadcrumb}><span>Restaurante</span><i>/</i><strong>{activeSection}</strong></div><div className={styles.topbarActions}><button className={styles.iconButton} aria-label="Notificaciones">♧<span className={styles.notificationDot}></span></button><div className={styles.profile}><span className={styles.avatar}>MR</span><div><strong>Mateo Rodríguez</strong><small>{userRole}</small></div><span className={styles.chevron}>⌄</span></div></div></header>
         <div className={styles.content}>
           <section className={styles.welcome}><div><p className={styles.eyebrow}>Jueves, 24 de octubre de 2024</p><h1>Buenas tardes, Mateo <span>✦</span></h1><p className={styles.subtitle}>Este es el estado de tu turno. Todo bajo control.</p></div><button className={styles.primaryButton} onClick={() => setSelectedTable('07')}>{icon('+')} Nueva orden</button></section>
           <section className={styles.statsGrid} aria-label="Resumen del turno">
