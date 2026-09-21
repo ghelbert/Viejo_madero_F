@@ -132,6 +132,48 @@ function WaiterView({ onLogout }: { onLogout: () => void }) {
   )
 }
 
+const adminOrders = [
+  { code: '#S31', type: 'Mesa 1', customer: 'RY', payment: '—', total: 'S/ 78.00' },
+  { code: '#A25', type: 'Delivery', customer: 'a2', payment: 'Plin', total: 'S/ 42.00' },
+  { code: '#D36', type: 'Delivery', customer: 'w', payment: 'Yape', total: 'S/ 24.00' },
+]
+
+function AdminView({ onLogout }: { onLogout: () => void }) {
+  const [activeTab, setActiveTab] = useState('Resumen')
+
+  return (
+    <div className={styles.adminShell}>
+      <header className={styles.adminHeader}>
+        <div className={styles.adminBrand}>
+          <span className={styles.adminLogo}>{icon('♧')}</span>
+          <div><strong>El Viejo Madero</strong><small>Administrador · Rosa Medina</small></div>
+        </div>
+        <button className={styles.adminLogout} onClick={onLogout}>{icon('↪')} Salir</button>
+      </header>
+      <main className={styles.adminContent}>
+        <div className={styles.adminIntro}>
+          <div><h1>Administración</h1><p>Operación, carta, empleados y resultados de El Viejo Madero.</p></div>
+          <nav className={styles.adminTabs} aria-label="Secciones de administración">
+            {['Resumen', 'Carta', 'Empleados', 'Reportes'].map((tab) => <button key={tab} className={activeTab === tab ? styles.adminTabActive : ''} onClick={() => setActiveTab(tab)}>{tab}</button>)}
+          </nav>
+        </div>
+        <section className={styles.adminStats} aria-label="Resumen de operación">
+          <div className={styles.adminStat}><span className={styles.adminStatIcon}>{icon('♨')}</span><div><small>Pedidos totales</small><strong>3</strong></div></div>
+          <div className={`${styles.adminStat} ${styles.adminStatEmphasis}`}><span className={styles.adminStatIcon}>{icon('⌁')}</span><div><small>Activos ahora</small><strong>3</strong></div></div>
+          <div className={styles.adminStat}><span className={styles.adminStatIcon}>{icon('♧')}</span><div><small>Delivery</small><strong>2</strong></div></div>
+          <div className={styles.adminStat}><span className={styles.adminStatIcon}>{icon('▱')}</span><div><small>Vendido (entregado)</small><strong>S/ 0.00</strong></div></div>
+        </section>
+        <section className={styles.adminOrders} aria-labelledby="recent-orders-title">
+          <h2 id="recent-orders-title">Pedidos recientes</h2>
+          <div className={styles.adminTableWrap}>
+            <table className={styles.adminTable}><thead><tr><th>Código</th><th>Tipo</th><th>Cliente</th><th>Estado</th><th>Pago</th><th className={styles.adminTotalColumn}>Total</th></tr></thead><tbody>{adminOrders.map((order) => <tr key={order.code}><th scope="row">{order.code}</th><td>{order.type}</td><td>{order.customer}</td><td><span className={styles.newStatus}>Nuevo</span></td><td>{order.payment}</td><td className={styles.adminTotalColumn}>{order.total}</td></tr>)}</tbody></table>
+          </div>
+        </section>
+      </main>
+    </div>
+  )
+}
+
 function LoginScreen({ onLogin }: { onLogin: (role: UserRole) => void }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -191,6 +233,7 @@ function App() {
 
   if (!isAuthenticated) return <LoginScreen onLogin={(role) => { setUserRole(role); setIsAuthenticated(true) }} />
   if (userRole === 'Mozo') return <WaiterView onLogout={() => setIsAuthenticated(false)} />
+  if (userRole === 'Administrador') return <AdminView onLogout={() => setIsAuthenticated(false)} />
 
   return (
     <div className={styles.appShell}>
