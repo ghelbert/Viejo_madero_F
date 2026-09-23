@@ -141,6 +141,14 @@
 @media (max-width: 760px) { .adminHeader { padding-right: 18px; }.adminContent { padding-top: 23px; }.adminIntro { display: block; }.adminTabs { width: fit-content; margin-top: 18px; }.adminTabs button { min-width: 70px; padding: 0 9px; font-size: 12px; }.adminStats { grid-template-columns: repeat(2, 1fr); gap: 9px; }.adminStat { padding: 12px; }.adminStat small { font-size: 12px; }.adminStat strong { font-size: 18px; }.adminOrders { margin-top: 28px; } }
 @media (max-width: 420px) { .adminBrand small { font-size: 10px; }.adminBrand strong { font-size: 14px; }.adminLogo { width: 33px; height: 33px; }.adminStats { grid-template-columns: 1fr; }.adminStat { min-height: 68px; }.adminStatIcon { flex-basis: 35px; width: 35px; height: 35px; }.adminContent { padding-right: 12px; padding-left: 12px; } }
 
+/* Administrator controls */
+.adminSectionHeader { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 15px; }
+.adminSectionHeader h2 { margin: 0; }
+.adminActionButton { padding: 8px 12px; border: 0; border-radius: 6px; color: #fffaf3; background: #6d442d; font-size: 12px; cursor: pointer; }
+.adminForm { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; margin-bottom: 16px; padding: 14px; border: 1px solid #dfd2c4; border-radius: 8px; background: #f7f0e5; }
+.adminForm input, .adminForm select { min-width: 0; height: 36px; padding: 0 9px; border: 1px solid #d9cbbb; border-radius: 5px; color: #33251d; background: #fffdf9; font-size: 12px; }
+.adminTable tbody button { padding: 5px 8px; border: 1px solid #d9cbbb; border-radius: 4px; color: #6d442d; background: #fffdf9; font-size: 11px; cursor: pointer; }
+
 /* Kitchen board */
 .kitchenShell { min-height: 100vh; color: #211a16; background: #faf6ed; }
 .kitchenHeader { height: 57px; display: flex; align-items: center; justify-content: space-between; padding: 0 67px; color: #fffaf3; background: #6d442d; }
@@ -149,4 +157,4 @@
 .kitchenContent { max-width: 1050px; margin: 0 auto; padding: 22px 0 30px; }.kitchenIntro h1 { margin: 0; font: 700 24px/1.2 'Playfair Display', serif; }.kitchenIntro p { margin: 5px 0 20px; color: #806b5d; font-size: 13px; }
 .kitchenBoard { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }.kitchenColumn { min-height: 142px; padding: 11px; border: 1px solid #ddd1c0; border-radius: 10px; background: #f8f2e7; }.kitchenColumnHeading { display: flex; align-items: center; gap: 9px; padding: 0 0 9px; }.kitchenColumnHeading h2 { margin: 0; font: 700 16px 'Playfair Display', serif; }.kitchenStatusIcon { display: grid; place-items: center; width: 29px; height: 29px; border-radius: 7px; font-size: 15px; }.kitchenStatusIcon.new { color: #fffaf3; background: #d77b2c; }.kitchenStatusIcon.cooking { color: #fffaf3; background: #6d442d; }.kitchenStatusIcon.ready { color: #33412d; background: #c6d0b9; }.kitchenCount { display: grid; place-items: center; width: 27px; height: 21px; margin-left: auto; border: 1px solid #ddd2c4; border-radius: 12px; color: #4f443a; background: #eee7da; font-size: 11px; }.kitchenEmpty { display: grid; place-items: center; height: 78px; border: 1px dashed #d9cdbb; border-radius: 8px; color: #856e5f; font-size: 13px; }
 .kitchenCard { display: grid; gap: 8px; margin-top: 8px; padding: 11px; border: 1px solid #ded1bf; border-radius: 8px; background: #fffaf3; color: #4a392e; font-size: 12px; }.kitchenCard span { color: #8a6b56; }.kitchenCard button { padding: 7px 9px; border: 0; border-radius: 5px; color: #fffaf3; background: #6d442d; font-size: 11px; cursor: pointer; }
-@media (max-width: 720px) { .kitchenHeader { padding: 0 16px; }.kitchenContent { padding: 24px 16px 40px; }.kitchenBoard { grid-template-columns: 1fr; gap: 10px; }.kitchenColumn { min-height: 130px; } }
+@media (max-width: 720px) { .adminForm { grid-template-columns: 1fr; }.kitchenHeader { padding: 0 16px; }.kitchenContent { padding: 24px 16px 40px; }.kitchenBoard { grid-template-columns: 1fr; gap: 10px; }.kitchenColumn { min-height: 130px; } }
