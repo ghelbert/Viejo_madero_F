@@ -132,6 +132,44 @@ function WaiterView({ onLogout }: { onLogout: () => void }) {
   )
 }
 
+function KitchenView({ onLogout }: { onLogout: () => void }) {
+  const columns = [
+    { title: 'Nuevos', icon: '◷', empty: 'Sin comandas nuevas', tone: 'new' },
+    { title: 'En preparación', icon: '♨', empty: 'Nada en preparación', tone: 'cooking' },
+    { title: 'Listos', icon: '✓', empty: 'Aún no hay platos listos', tone: 'ready' },
+  ]
+
+  return (
+    <div className={styles.kitchenShell}>
+      <header className={styles.kitchenHeader}>
+        <div className={styles.kitchenBrand}>
+          <span className={styles.kitchenLogo}>{icon('♧')}</span>
+          <div><strong>El Viejo Madero</strong><small>Cocinero · Miguel Torres</small></div>
+        </div>
+        <button className={styles.kitchenLogout} onClick={onLogout}>{icon('↪')} Salir</button>
+      </header>
+      <main className={styles.kitchenContent}>
+        <section className={styles.kitchenIntro}>
+          <h1>Cocina — comandas</h1>
+          <p>Los pedidos entran automáticamente. Muévelos según avance la preparación.</p>
+        </section>
+        <section className={styles.kitchenBoard} aria-label="Estado de las comandas">
+          {columns.map((column) => (
+            <article className={styles.kitchenColumn} key={column.title}>
+              <div className={styles.kitchenColumnHeading}>
+                <span className={`${styles.kitchenStatusIcon} ${styles[column.tone]}`}>{icon(column.icon)}</span>
+                <h2>{column.title}</h2>
+                <span className={styles.kitchenCount}>0</span>
+              </div>
+              <div className={styles.kitchenEmpty}>{column.empty}</div>
+            </article>
+          ))}
+        </section>
+      </main>
+    </div>
+  )
+}
+
 const adminOrders = [
   { code: '#S31', type: 'Mesa 1', customer: 'RY', payment: '—', total: 'S/ 78.00' },
   { code: '#A25', type: 'Delivery', customer: 'a2', payment: 'Plin', total: 'S/ 42.00' },
@@ -233,6 +271,7 @@ function App() {
 
   if (!isAuthenticated) return <LoginScreen onLogin={(role) => { setUserRole(role); setIsAuthenticated(true) }} />
   if (userRole === 'Mozo') return <WaiterView onLogout={() => setIsAuthenticated(false)} />
+  if (userRole === 'Cocinero') return <KitchenView onLogout={() => setIsAuthenticated(false)} />
   if (userRole === 'Administrador') return <AdminView onLogout={() => setIsAuthenticated(false)} />
 
   return (
