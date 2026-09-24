@@ -17,6 +17,8 @@ export type Table = { id: number; code: string; capacity: number; zone: string; 
 export type Product = { id: number; name: string; description: string; base_price: number; category: string; available?: boolean }
 export type Category = { id: number; name: string }
 export type Order = { id: number; code: string; status: string; total: number; table_code?: string; waiter?: string; customer_name?: string }
+export type OrderItem = { product_id: number; product_name: string; unit_price: number; quantity: number; line_total: number }
+export type OrderDetail = Order & { items: OrderItem[] }
 export type TableDetail = { table: Table; order: Order & { items: Array<{ product_id: number; product_name: string; unit_price: number; quantity: number; line_total: number }> } }
 
 export const api = {
@@ -28,6 +30,7 @@ export const api = {
   categories: () => request<Category[]>('/categories'),
   users: () => request<Array<User & { active: boolean }>>('/users'),
   orders: (status?: string) => request<Order[]>(`/orders${status ? `?status=${status}` : ''}`),
+  orderDetail: (id: number) => request<OrderDetail>(`/orders/${id}/detail`),
   createOrder: (tableId: number, createdBy: number, customerName: string, items: Array<{ productId: number; productName: string; price: number; quantity: number; notes: string }>) => request<Order>('/orders', { method: 'POST', body: JSON.stringify({ tableId, createdBy, customerName, items }) }),
     updateOrderItems: (id: number, customerName: string, items: Array<{ productId: number; productName: string; price: number; quantity: number; notes: string }>) => request<Order>(`/orders/${id}/items`, { method: 'PATCH', body: JSON.stringify({ customerName, items }) }),
     deleteOrder: (id: number) => request<void>(`/orders/${id}`, { method: 'DELETE' }),
