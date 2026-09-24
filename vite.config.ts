@@ -8,5 +8,5 @@ export default defineConfig({
     react(),
     babel({ presets: [reactCompilerPreset()] })
   ],
-  base:"Viejo_madero_F"
+  base: "/Viejo_madero_F/"
 })
