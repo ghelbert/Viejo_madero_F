@@ -13,20 +13,24 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 }
 
 export type User = { id: number; full_name: string; username: string; role: string }
-export type Table = { id: number; code: string; capacity: number; zone: string; status: 'FREE' | 'OCCUPIED' | 'RESERVED' | 'CLEANING' }
+export type Table = { id: number; code: string; capacity: number; zone: string; status: 'FREE' | 'OCCUPIED' | 'RESERVED' | 'CLEANING'; customer_name?: string }
 export type Product = { id: number; name: string; description: string; base_price: number; category: string; available?: boolean }
 export type Category = { id: number; name: string }
-export type Order = { id: number; code: string; status: string; total: number; table_code?: string; waiter?: string }
+export type Order = { id: number; code: string; status: string; total: number; table_code?: string; waiter?: string; customer_name?: string }
+export type TableDetail = { table: Table; order: Order & { items: Array<{ product_id: number; product_name: string; unit_price: number; quantity: number; line_total: number }> } }
 
 export const api = {
   login: (username: string, password: string) => request<User>('/auth/login', { method: 'POST', body: JSON.stringify({ username, password }) }),
   tables: () => request<Table[]>('/tables'),
+  tableDetail: (id: number) => request<TableDetail>(`/tables/${id}/detail`),
   products: () => request<Product[]>('/products'),
   adminProducts: () => request<Product[]>('/admin/products'),
   categories: () => request<Category[]>('/categories'),
   users: () => request<Array<User & { active: boolean }>>('/users'),
   orders: (status?: string) => request<Order[]>(`/orders${status ? `?status=${status}` : ''}`),
-  createOrder: (tableId: number, createdBy: number, items: Array<{ productId: number; productName: string; price: number; quantity: number; notes: string }>) => request<Order>('/orders', { method: 'POST', body: JSON.stringify({ tableId, createdBy, items }) }),
+  createOrder: (tableId: number, createdBy: number, customerName: string, items: Array<{ productId: number; productName: string; price: number; quantity: number; notes: string }>) => request<Order>('/orders', { method: 'POST', body: JSON.stringify({ tableId, createdBy, customerName, items }) }),
+    updateOrderItems: (id: number, customerName: string, items: Array<{ productId: number; productName: string; price: number; quantity: number; notes: string }>) => request<Order>(`/orders/${id}/items`, { method: 'PATCH', body: JSON.stringify({ customerName, items }) }),
+    deleteOrder: (id: number) => request<void>(`/orders/${id}`, { method: 'DELETE' }),
   confirmOrder: (id: number, userId: number) => request<Order>(`/orders/${id}/confirm?userId=${userId}`, { method: 'POST' }),
   updateOrder: (id: number, status: string, userId: number) => request<Order>(`/orders/${id}/status`, { method: 'POST', body: JSON.stringify({ status, userId }) }),
   createUser: (data: { fullName: string; username: string; password: string; role: string }) => request('/users', { method: 'POST', body: JSON.stringify(data) }),
