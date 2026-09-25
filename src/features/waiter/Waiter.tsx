@@ -23,6 +23,8 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
   const [editingOrderId, setEditingOrderId] = useState<number | null>(null)
   const [cart, setCart] = useState<Cart>({})
   const [customerName, setCustomerName] = useState('')
+  const [customerNameError, setCustomerNameError] = useState('')
+  const [cartError, setCartError] = useState('')
   const [message, setMessage] = useState('')
 
   const loadReadyOrders = async () => {
@@ -55,8 +57,10 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
     }
   }, [])
 
-  const add = (id: number) =>
+  const add = (id: number) => {
     setCart((current) => ({ ...current, [id]: (current[id] ?? 0) + 1 }))
+    setCartError('')
+  }
 
   const decrease = (id: number) =>
     setCart((current) => {
@@ -80,7 +84,16 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
   )
 
   const save = async () => {
-    if (!selected || !cartProducts.length || !customerName.trim()) return
+    if (!selected) return
+    const hasCustomerName = Boolean(customerName.trim())
+    const hasCartItems = cartProducts.length > 0
+    setCustomerNameError(
+      hasCustomerName
+        ? ''
+        : 'Ingresa el nombre del cliente para registrar el pedido.',
+    )
+    setCartError(hasCartItems ? '' : 'Selecciona al menos un plato para el pedido.')
+    if (!hasCustomerName || !hasCartItems) return
     const items = cartProducts.map((product) => ({
       productId: product.id,
       productName: product.name,
@@ -267,7 +280,7 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
               </div>
               <article className={styles.modalOrder}>
                 <div className={styles.modalOrderHeader}>
-                  <strong>{busyTable.order.code}</strong>
+                  <strong>#{String(busyTable.order.id).padStart(3, '0')}</strong>
                   <span>
                     {busyTable.order.status === 'SERVED'
                       ? 'Servido'
@@ -323,11 +336,22 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
             Nombre del cliente
             <input
               value={customerName}
-              onChange={(event) => setCustomerName(event.target.value)}
+              onChange={(event) => {
+                const value = event.target.value
+                setCustomerName(value)
+                if (value.trim()) setCustomerNameError('')
+              }}
               placeholder="Ej. Ana García"
               maxLength={120}
+              aria-invalid={Boolean(customerNameError)}
+              aria-describedby={customerNameError ? 'customer-name-error' : undefined}
               required
             />
+            {customerNameError && (
+              <span className={styles.fieldError} id="customer-name-error" role="alert">
+                {customerNameError}
+              </span>
+            )}
           </label>
           <div className={styles.orderLayout}>
             <div className={styles.menuList}>
@@ -381,13 +405,17 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
               {!cartProducts.length && (
                 <p className={styles.emptyCart}>Agrega platos desde la carta.</p>
               )}
+              {cartError && (
+                <p className={styles.fieldError} role="alert">
+                  {cartError}
+                </p>
+              )}
               <div className={styles.cartTotal}>
                 <span>Total</span>
                 <strong>{money(total)}</strong>
               </div>
               <button
                 className={styles.loginButton}
-                disabled={!cartProducts.length || !customerName.trim()}
                 onClick={save}
               >
                 {editingOrderId ? 'Actualizar pedido' : 'Registrar pedido'}

@@ -107,6 +107,7 @@
 .orderTitle h1 { margin: 0; font: 700 25px 'Playfair Display', serif; }
 .orderTitle span { padding: 4px 9px; border-radius: 12px; color: #fffaf3; background: #d67b2b; font-size: 12px; font-weight: 700; }
 .customerField { display: grid; gap: 7px; width: 370px; margin-top: 17px; color: #382a23; font-size: 14px; }
+.fieldError { color: #b42318; font-size: 12px; }
 .customerField input { height: 39px; padding: 0 11px; border: 1px solid #dccfbe; border-radius: 6px; outline: 0; color: #382a23; background: #fffaf4; font-size: 13px; }
 .customerField input:focus { border-color: #b37951; box-shadow: 0 0 0 3px rgba(179, 121, 81, .12); }
 .orderLayout { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(330px, 1fr); gap: 20px; margin-top: 22px; }
