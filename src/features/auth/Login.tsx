@@ -79,9 +79,6 @@ export function Login({ onLogin }: { onLogin: (user: User) => void }) {
               {loading ? 'Validando...' : 'Entrar'}
             </button>
           </form>
-          <p className={styles.demoAccess}>
-            Usuarios iniciales: <b>admin</b>, <b>mozo</b> y <b>cocina</b>.
-          </p>
         </div>
       </section>
     </main>
