@@ -1,4 +1,8 @@
-const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8080/api";
+const configuredApiUrl = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
+const normalizedApiUrl = configuredApiUrl.replace(/\/+$/, "");
+const API_URL = normalizedApiUrl.endsWith("/api")
+  ? normalizedApiUrl
+  : `${normalizedApiUrl}/api`;
  
 export async function request<T>(
   path: string,
