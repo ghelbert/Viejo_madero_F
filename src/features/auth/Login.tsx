@@ -14,8 +14,12 @@ export function Login({ onLogin }: { onLogin: (user: User) => void }) {
     setError('')
     try {
       onLogin(await api.login(username, password))
-    } catch {
-      setError('Usuario o contraseña incorrectos')
+    } catch (loginError) {
+      setError(
+        loginError instanceof Error
+          ? loginError.message
+          : 'No se pudo iniciar sesión. Inténtalo nuevamente.',
+      )
     } finally {
       setLoading(false)
     }

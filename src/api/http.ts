@@ -12,7 +12,14 @@ export async function request<T>(
     ...options,
   });
   if (!response.ok) {
-    const message = await response.text();
+    const body = await response.text();
+    let message = body;
+    try {
+      const parsed = JSON.parse(body) as { message?: unknown };
+      if (typeof parsed.message === "string") message = parsed.message;
+    } catch {
+      message = body;
+    }
     throw new Error(message || "No se pudo completar la operación");
   }
   return response.status === 204 ? (undefined as T) : response.json();

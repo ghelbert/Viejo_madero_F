@@ -101,14 +101,23 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
       quantity: cart[product.id],
       notes: '',
     }))
-    if (editingOrderId)
-      await api.updateOrderItems(editingOrderId, customerName.trim(), items)
-    else await api.createOrder(selected.id, user.id, customerName.trim(), items)
-    setMessage(
-      editingOrderId
-        ? 'Pedido actualizado'
-        : 'Pedido registrado y listo para confirmar',
-    )
+    try {
+      if (editingOrderId)
+        await api.updateOrderItems(editingOrderId, customerName.trim(), items)
+      else await api.createOrder(selected.id, user.id, customerName.trim(), items)
+      setMessage(
+        editingOrderId
+          ? `Pedido de mesa ${selected.code} actualizado.`
+          : `Pedido registrado en mesa ${selected.code} y listo para confirmar.`,
+      )
+    } catch (saveError) {
+      setMessage(
+        saveError instanceof Error
+          ? saveError.message
+          : 'No se pudo registrar el pedido. Inténtalo nuevamente.',
+      )
+      return
+    }
     setCart({})
     setCustomerName('')
     setEditingOrderId(null)
@@ -144,6 +153,7 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
   }
 
   const selectTable = async (table: Table) => {
+    setMessage('')
     if (table.status === 'FREE') {
       setSelected(table)
       return
@@ -325,6 +335,11 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
       <>
         <Header user={user} onLogout={onLogout} />
         <main className={styles.orderContent}>
+          {message && (
+            <p className={styles.waiterNotification} role="status">
+              {message}
+            </p>
+          )}
           <button className={styles.backButton} onClick={() => setSelected(null)}>
             ← Volver a mesas
           </button>
@@ -440,7 +455,11 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
             </div>
           </div>
           <p>Selecciona una mesa para registrar un pedido.</p>
-          {message && <p>{message}</p>}
+          {message && (
+            <p className={styles.waiterNotification} role="status">
+              {message}
+            </p>
+          )}
           <div className={styles.waiterTableGrid}>
             {tables.map((table) => (
               <button

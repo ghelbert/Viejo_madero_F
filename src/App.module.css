@@ -73,6 +73,7 @@
 .waiterLogo { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 5px; color: #fffaf3; background: #d67b2b; font-size: 18px; }
 .logoutButton { display: flex; align-items: center; gap: 5px; padding: 7px 0; border: 0; color: #fffaf3; background: transparent; font-size: 13px; cursor: pointer; }
 .waiterContent { max-width: 1180px; margin: 0 auto; padding: 26px 22px 50px; }
+.waiterNotification { margin: 14px 0; padding: 11px 14px; border: 1px solid #b8c9ac; border-radius: 6px; color: #334b35; background: #edf3e8; font-size: 14px; }
 .waiterIntro h1 { margin: 0; font: 700 27px/1.2 'Playfair Display', serif; }
 .waiterIntro p { margin: 6px 0 0; color: #806b5d; font-size: 14px; }
 .readySection { margin-top: 40px; }
