@@ -200,7 +200,7 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
           {readyOrders.map((order) => (
             <article className={styles.readyOrderCard} key={order.id}>
               <div className={styles.readyOrderHeader}>
-                <strong>#{String(order.id).padStart(3, "0")}</strong>
+                <strong>Pedido #{String(order.id).padStart(3, "0")}</strong>
                 <span>Mesa {order.table_code}</span>
               </div>
               {order.customer_name && <small>{order.customer_name}</small>}
@@ -417,7 +417,7 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
             </div>
             <article className={modalStyles.modalOrder}>
               <div className={modalStyles.modalOrderHeader}>
-                <strong>#{String(busyTable.order.id).padStart(3, '0')}</strong>
+                <strong>Pedido #{String(busyTable.order.id).padStart(3, '0')}</strong>
                 <span>
                   {busyTable.order.status === 'SERVED'
                     ? 'Servido'

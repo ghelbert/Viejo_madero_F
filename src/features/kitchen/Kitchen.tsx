@@ -66,7 +66,7 @@ export function Kitchen({ user, onLogout }: { user: User; onLogout: () => void }
                 .map((order) => (
                   <div className={styles.kitchenCard} key={order.id}>
                     <div className={styles.kitchenCardHeader}>
-                      <strong>#{String(order.id).padStart(3, '0')}</strong>
+                      <strong>Pedido #{String(order.id).padStart(3, '0')}</strong>
                       <small>Mesa {order.table_code}</small>
                     </div>
                     {order.customer_name && (
