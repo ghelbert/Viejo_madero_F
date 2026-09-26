@@ -1,0 +1,8 @@
+.waiterHeader { height: 57px; display: flex; align-items: center; justify-content: space-between; padding: 0 22px; color: #fffaf3; background: #6c432c; }
+.waiterBrand { display: flex; align-items: center; gap: 12px; }
+.waiterBrand > div strong, .waiterBrand > div small { display: block; }
+.waiterBrand strong { font: 700 16px/1 'Playfair Display', serif; }
+.waiterBrand small { margin-top: 4px; color: #e3cbbb; font-size: 12px; }
+.waiterLogo { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 5px; color: #fffaf3; background: #d67b2b; font-size: 18px; }
+.logoutButton { display: flex; align-items: center; gap: 5px; padding: 7px 0; border: 0; color: #fffaf3; background: transparent; font-size: 13px; cursor: pointer; }
+@media (max-width: 720px) { .waiterHeader { padding: 0 16px; } }

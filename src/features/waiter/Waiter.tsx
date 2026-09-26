@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import styles from '../../App.module.css'
+import styles from './Waiter.module.css'
 import {
   api,
   type Order,
@@ -12,6 +12,7 @@ import {
 import type { Cart } from '../../types/role'
 import { money } from '../../utils/format'
 import { Header } from '../../components/Header'
+import modalStyles from '../../components/Modal.module.css'
 
 export function Waiter({ user, onLogout }: { user: User; onLogout: () => void }) {
   const [tables, setTables] = useState<Table[]>([])
@@ -199,7 +200,7 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
           {readyOrders.map((order) => (
             <article className={styles.readyOrderCard} key={order.id}>
               <div className={styles.readyOrderHeader}>
-                <strong>#{String(order.id).padEnd(3)}</strong>
+                <strong>#{String(order.id).padStart(3, "0")}</strong>
                 <span>Mesa {order.table_code}</span>
               </div>
               {order.customer_name && <small>{order.customer_name}</small>}
@@ -321,7 +322,7 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
                 <strong>{money(total)}</strong>
               </div>
               <button
-                className={styles.loginButton}
+                className={styles.submitOrderButton}
                 onClick={save}
               >
                 {editingOrderId ? 'Actualizar pedido' : 'Registrar pedido'}
@@ -359,23 +360,23 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
                 onClick={() => void selectTable(table)}
               >
                 <span className={styles.chairIcon}><svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    className="lucide lucide-armchair size-7 text-primary"
-                    aria-hidden="true"
-                  >
-                    <path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3"></path>
-                    <path d="M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v1.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V11a2 2 0 0 0-4 0z"></path>
-                    <path d="M5 18v2"></path>
-                    <path d="M19 18v2"></path>
-                  </svg></span>
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  className="lucide lucide-armchair size-7 text-primary"
+                  aria-hidden="true"
+                >
+                  <path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3"></path>
+                  <path d="M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v1.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V11a2 2 0 0 0-4 0z"></path>
+                  <path d="M5 18v2"></path>
+                  <path d="M19 18v2"></path>
+                </svg></span>
                 <strong>{table.code}</strong>
                 <span className={styles.waiterStatus}>
                   {table.status === 'FREE' ? 'Libre' : 'Ocupada'}
@@ -391,9 +392,9 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
         </section>
       </main>
       {busyTable && (
-        <div className={styles.modalBackdrop} onClick={closeBusyTable}>
+        <div className={modalStyles.modalBackdrop} onClick={closeBusyTable}>
           <section
-            className={styles.tableModal}
+            className={modalStyles.tableModal}
             role="dialog"
             aria-modal="true"
             aria-labelledby="busy-table-title"
@@ -402,7 +403,7 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
             <header>
               <h2 id="busy-table-title">Mesa {busyTable.table.code}</h2>
               <button
-                className={styles.modalClose}
+                className={modalStyles.modalClose}
                 onClick={closeBusyTable}
                 aria-label="Cerrar"
               >
@@ -410,12 +411,12 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
               </button>
               <p>Detalle de lo que está consumiendo la mesa.</p>
             </header>
-            <div className={styles.modalTotal}>
+            <div className={modalStyles.modalTotal}>
               <span>Consumo total</span>
               <strong>{money(Number(busyTable.order.total))}</strong>
             </div>
-            <article className={styles.modalOrder}>
-              <div className={styles.modalOrderHeader}>
+            <article className={modalStyles.modalOrder}>
+              <div className={modalStyles.modalOrderHeader}>
                 <strong>#{String(busyTable.order.id).padStart(3, '0')}</strong>
                 <span>
                   {busyTable.order.status === 'SERVED'
@@ -427,23 +428,23 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
                 <small>Cliente: {busyTable.order.customer_name}</small>
               )}
               {busyTable.order.items.map((item) => (
-                <div className={styles.modalItem} key={item.product_id}>
+                <div className={modalStyles.modalItem} key={item.product_id}>
                   <strong>{item.quantity}x</strong>
                   <span>{item.product_name}</span>
                   <span>{money(Number(item.line_total))}</span>
                 </div>
               ))}
-              <div className={styles.modalSubtotal}>
+              <div className={modalStyles.modalSubtotal}>
                 <span>Subtotal</span>
                 <strong>{money(Number(busyTable.order.total))}</strong>
               </div>
             </article>
-            <div className={styles.modalActions}>
+            <div className={modalStyles.modalActions}>
               <button onClick={editBusyOrder}>
                 + &nbsp;Agregar pedido a esta mesa
               </button>
               <button
-                className={styles.releaseButton}
+                className={modalStyles.releaseButton}
                 onClick={() => void releaseBusyTable()}
               >
                 Liberar mesa
@@ -454,11 +455,11 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
       )}
       {orderSuccessTable && (
         <div
-          className={styles.modalBackdrop}
+          className={modalStyles.modalBackdrop}
           onClick={() => setOrderSuccessTable(null)}
         >
           <section
-            className={styles.tableModal}
+            className={modalStyles.tableModal}
             role="dialog"
             aria-modal="true"
             aria-labelledby="order-success-title"
@@ -468,7 +469,7 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
               <h2 id="order-success-title">Pedido registrado</h2>
               <p>El pedido de la mesa {orderSuccessTable} se registró correctamente.</p>
             </header>
-            <div className={styles.modalActions}>
+            <div className={modalStyles.modalActions}>
               <button onClick={() => setOrderSuccessTable(null)}>Aceptar</button>
             </div>
           </section>

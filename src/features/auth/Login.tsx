@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import styles from '../../App.module.css'
+import styles from './Login.module.css'
 import { api, type User } from '../../api'
 
 export function Login({ onLogin }: { onLogin: (user: User) => void }) {

@@ -1,0 +1,132 @@
+.kitchenContent {
+  max-width: 1050px;
+  margin: 0 auto;
+  padding: 22px 0 30px;
+}
+
+.kitchenIntro h1 {
+  margin: 0;
+  font: 700 24px/1.2 'Playfair Display', serif;
+}
+
+.kitchenIntro p {
+  margin: 5px 0 20px;
+  color: #806b5d;
+  font-size: 13px;
+}
+
+.kitchenBoard {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.kitchenColumn {
+  min-height: 142px;
+  padding: 11px;
+  border: 1px solid #ddd1c0;
+  border-radius: 10px;
+  background: #f8f2e7;
+}
+
+.kitchenColumnHeading {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 0 9px;
+}
+
+.kitchenColumnHeading h2 {
+  margin: 0;
+  font: 700 16px 'Playfair Display', serif;
+}
+
+.kitchenCount {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 21px;
+  margin-left: auto;
+  border: 1px solid #ddd2c4;
+  border-radius: 12px;
+  color: #4f443a;
+  background: #eee7da;
+  font-size: 11px;
+}
+
+.kitchenCard {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 11px;
+  border: 1px solid #ded1bf;
+  border-radius: 8px;
+  background: #fffaf3;
+  color: #4a392e;
+  font-size: 12px;
+}
+
+.kitchenCard span {
+  color: #8a6b56;
+}
+
+.kitchenCard button {
+  padding: 7px 9px;
+  border: 0;
+  border-radius: 5px;
+  color: #fffaf3;
+  background: #6d442d;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.kitchenCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.kitchenCardHeader small {
+  color: #8a6b56;
+}
+
+.kitchenItems {
+  display: grid;
+  gap: 5px;
+  padding: 8px 0;
+  border-top: 1px solid #e4d8ca;
+  border-bottom: 1px solid #e4d8ca;
+}
+
+.kitchenItem {
+  display: grid;
+  grid-template-columns: 25px 1fr 0.24fr;
+  gap: 6px;
+}
+
+.kitchenItem strong {
+  color: #d67b2b;
+}
+
+.kitchenItem span {
+  color: #4a392e;
+}
+
+.kitchenTotal {
+  text-align: right;
+}
+
+@media (max-width: 720px) {
+  .kitchenContent {
+    padding: 24px 16px 40px;
+  }
+
+  .kitchenBoard {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .kitchenColumn {
+    min-height: 130px;
+  }
+}

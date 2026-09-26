@@ -1,0 +1,261 @@
+.adminContent {
+  max-width: 1185px;
+  margin: 0 auto;
+  padding: 27px 18px 20px;
+}
+
+.adminIntro {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 25px;
+}
+
+.adminIntro h1 {
+  margin: 0;
+  font: 700 25px/1.2 'Playfair Display', serif;
+}
+
+.adminIntro p {
+  margin: 6px 0 0;
+  color: #765f50;
+  font-size: 14px;
+}
+
+.adminTabs {
+  display: flex;
+  padding: 4px;
+  border: 1px solid #dfd2c2;
+  border-radius: 8px;
+  background: #f7f0e5;
+}
+
+.adminTabs button {
+  min-width: 78px;
+  height: 32px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 6px;
+  color: #765f50;
+  background: transparent;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.adminTabs .adminTabActive {
+  color: #34251d;
+  background: #fffdf9;
+  box-shadow: 0 1px 3px rgba(77, 52, 36, .13);
+}
+
+.adminStats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.adminStat {
+  min-height: 78px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid #dfd2c4;
+  border-radius: 8px;
+  background: #fffdf9;
+  box-shadow: 0 1px 2px rgba(93, 61, 43, .08);
+}
+
+.adminStat small,
+.adminStat strong {
+  display: block;
+}
+
+.adminStat small {
+  color: #765f50;
+  font-size: 13px;
+}
+
+.adminStat strong {
+  margin-top: 5px;
+  font-size: 20px;
+}
+
+.adminOrders {
+  margin-top: 34px;
+}
+
+.adminOrders h2 {
+  margin: 0 0 15px;
+  font: 700 18px 'Playfair Display', serif;
+}
+
+.adminTableWrap {
+  overflow-x: auto;
+  border: 1px solid #dfd2c4;
+  border-radius: 8px;
+  background: #fffdf9;
+}
+
+.adminTable {
+  width: 100%;
+  min-width: 700px;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.adminTable thead {
+  background: #f2e9dc;
+}
+
+.adminTable th {
+  color: #745d4e;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.adminTable thead th {
+  height: 33px;
+  padding: 0 16px;
+}
+
+.adminTable tbody th,
+.adminTable tbody td {
+  height: 38px;
+  padding: 0 16px;
+  border-top: 1px solid #dfd2c4;
+  color: #33251d;
+  text-align: left;
+}
+
+.adminTable tbody th {
+  font-weight: 700;
+}
+
+@media (max-width: 760px) {
+  .adminContent {
+    padding-top: 23px;
+  }
+
+  .adminIntro {
+    display: block;
+  }
+
+  .adminTabs {
+    width: fit-content;
+    margin-top: 18px;
+  }
+
+  .adminTabs button {
+    min-width: 70px;
+    padding: 0 9px;
+    font-size: 12px;
+  }
+
+  .adminStats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 9px;
+  }
+
+  .adminStat {
+    padding: 12px;
+  }
+
+  .adminStat small {
+    font-size: 12px;
+  }
+
+  .adminStat strong {
+    font-size: 18px;
+  }
+
+  .adminOrders {
+    margin-top: 28px;
+  }
+}
+
+@media (max-width: 420px) {
+  .adminStats {
+    grid-template-columns: 1fr;
+  }
+
+  .adminStat {
+    min-height: 68px;
+  }
+
+  .adminContent {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+}
+
+.adminSectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.adminSectionHeader h2 {
+  margin: 0;
+}
+
+.adminActionButton {
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 6px;
+  color: #fffaf3;
+  background: #6d442d;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.adminForm {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+  margin-bottom: 16px;
+  padding: 14px;
+  border: 1px solid #dfd2c4;
+  border-radius: 8px;
+  background: #f7f0e5;
+}
+
+.adminForm input,
+.adminForm select {
+  min-width: 0;
+  height: 36px;
+  padding: 0 9px;
+  border: 1px solid #d9cbbb;
+  border-radius: 5px;
+  color: #33251d;
+  background: #fffdf9;
+  font-size: 12px;
+}
+
+.adminTable tbody button {
+  padding: 5px 8px;
+  border: 1px solid #d9cbbb;
+  border-radius: 4px;
+  color: #6d442d;
+  background: #fffdf9;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.adminError {
+  margin: 2px 0 0;
+  color: #b6482e;
+  font-size: 12px;
+}
+
+@media (max-width: 720px) {
+  .adminForm {
+    grid-template-columns: 1fr;
+  }
+}

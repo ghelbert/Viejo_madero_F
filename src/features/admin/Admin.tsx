@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import styles from '../../App.module.css'
+import styles from './Admin.module.css'
+import modalStyles from '../../components/Modal.module.css'
 import { api, type Order, type Product, type User } from '../../api'
 import type { Role } from '../../types/role'
 import { money, roleLabel } from '../../utils/format'
@@ -189,7 +190,7 @@ export function Admin({ user, onLogout }: { user: User; onLogout: () => void }) 
             ))}
           </nav>
         </div>
-        {error && <p className={styles.loginError}>{error}</p>}
+        {error && <p className={styles.adminError}>{error}</p>}
 
         {tab === 'Resumen' && (
           <section className={styles.adminStats}>
@@ -493,11 +494,11 @@ export function Admin({ user, onLogout }: { user: User; onLogout: () => void }) 
       </main>
       {usernameError && (
         <div
-          className={styles.modalBackdrop}
+          className={modalStyles.modalBackdrop}
           onClick={() => setUsernameError('')}
         >
           <section
-            className={styles.tableModal}
+            className={modalStyles.tableModal}
             role="alertdialog"
             aria-modal="true"
             aria-labelledby="duplicate-username-title"
@@ -507,7 +508,7 @@ export function Admin({ user, onLogout }: { user: User; onLogout: () => void }) 
               <h2 id="duplicate-username-title">Nombre de usuario en uso</h2>
               <p>{usernameError}</p>
             </header>
-            <div className={styles.modalActions}>
+            <div className={modalStyles.modalActions}>
               <button onClick={() => setUsernameError('')}>Aceptar</button>
             </div>
           </section>
@@ -515,11 +516,11 @@ export function Admin({ user, onLogout }: { user: User; onLogout: () => void }) 
       )}
       {successMessage && (
         <div
-          className={styles.modalBackdrop}
+          className={modalStyles.modalBackdrop}
           onClick={() => setSuccessMessage('')}
         >
           <section
-            className={styles.tableModal}
+            className={modalStyles.tableModal}
             role="dialog"
             aria-modal="true"
             aria-labelledby="admin-success-title"
@@ -529,7 +530,7 @@ export function Admin({ user, onLogout }: { user: User; onLogout: () => void }) 
               <h2 id="admin-success-title">Guardado correctamente</h2>
               <p>{successMessage}</p>
             </header>
-            <div className={styles.modalActions}>
+            <div className={modalStyles.modalActions}>
               <button onClick={() => setSuccessMessage('')}>Aceptar</button>
             </div>
           </section>

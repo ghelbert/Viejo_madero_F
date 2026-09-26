@@ -1,4 +1,4 @@
-import styles from '../App.module.css'
+import styles from './Header.module.css'
 import type { User } from '../api'
 import type { Role } from '../types/role'
 import { roleLabel } from '../utils/format'

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import styles from '../../App.module.css'
+import styles from './Kitchen.module.css'
 import { api, type Order, type OrderItem, type User } from '../../api'
 import { money } from '../../utils/format'
 import { Header } from '../../components/Header'
