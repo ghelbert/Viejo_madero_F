@@ -199,7 +199,7 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
           {readyOrders.map((order) => (
             <article className={styles.readyOrderCard} key={order.id}>
               <div className={styles.readyOrderHeader}>
-                <strong>{order.code}</strong>
+                <strong>#{String(order.id).padEnd(3)}</strong>
                 <span>Mesa {order.table_code}</span>
               </div>
               {order.customer_name && <small>{order.customer_name}</small>}
@@ -208,6 +208,7 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
                   <div key={item.product_id}>
                     <b>{item.quantity}x</b>
                     <span>{item.product_name}</span>
+                    <span>{money(Number(item.line_total))}</span>
                   </div>
                 ))}
               </div>
@@ -218,116 +219,6 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
       )}
     </section>
   )
-
-  /* --- Vista: detalle de mesa ocupada --- */
-  if (busyTable)
-    return (
-      <>
-        <Header user={user} onLogout={onLogout} />
-        <main className={styles.waiterContent}>
-          <section className={styles.waiterIntro}>
-            <h1>Mesas del salón</h1>
-            <p>Selecciona una mesa para registrar un pedido.</p>
-          </section>
-          <div className={styles.waiterTableGrid}>
-            {tables.map((table) => (
-              <button
-                className={styles.waiterTableCard}
-                key={table.id}
-                onClick={() => void selectTable(table)}
-              >
-                <span className={styles.chairIcon}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    className="lucide lucide-armchair size-7 text-primary"
-                    aria-hidden="true"
-                  >
-                    <path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3"></path>
-                    <path d="M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v1.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V11a2 2 0 0 0-4 0z"></path>
-                    <path d="M5 18v2"></path>
-                    <path d="M19 18v2"></path>
-                  </svg>
-                </span>
-                <strong>{table.code}</strong>
-                <span className={styles.waiterStatus}>
-                  {table.status === 'FREE' ? 'Libre' : 'Ocupada'}
-                </span>
-                {table.customer_name && (
-                  <small className={styles.tableCustomer}>
-                    {table.customer_name}
-                  </small>
-                )}
-              </button>
-            ))}
-          </div>
-          <div className={styles.modalBackdrop} onClick={closeBusyTable}>
-            <section
-              className={styles.tableModal}
-              onClick={(event) => event.stopPropagation()}
-            >
-              <header>
-                <h2>Mesa {busyTable.table.code}</h2>
-                <button
-                  className={styles.modalClose}
-                  onClick={closeBusyTable}
-                  aria-label="Cerrar"
-                >
-                  x
-                </button>
-                <p>Detalle de lo que está consumiendo la mesa.</p>
-              </header>
-              <div className={styles.modalTotal}>
-                <span>Consumo total</span>
-                <strong>{money(Number(busyTable.order.total))}</strong>
-              </div>
-              <article className={styles.modalOrder}>
-                <div className={styles.modalOrderHeader}>
-                  <strong>#{String(busyTable.order.id).padStart(3, '0')}</strong>
-                  <span>
-                    {busyTable.order.status === 'SERVED'
-                      ? 'Servido'
-                      : busyTable.order.status}
-                  </span>
-                </div>
-                {busyTable.order.customer_name && (
-                  <small>Cliente: {busyTable.order.customer_name}</small>
-                )}
-                {busyTable.order.items.map((item) => (
-                  <div className={styles.modalItem} key={item.product_id}>
-                    <strong>{item.quantity}x</strong>
-                    <span>{item.product_name}</span>
-                    <span>{money(Number(item.line_total))}</span>
-                  </div>
-                ))}
-                <div className={styles.modalSubtotal}>
-                  <span>Subtotal</span>
-                  <strong>{money(Number(busyTable.order.total))}</strong>
-                </div>
-              </article>
-              <div className={styles.modalActions}>
-                <button onClick={editBusyOrder}>
-                  + &nbsp;Agregar pedido a esta mesa
-                </button>
-                <button
-                  className={styles.releaseButton}
-                  onClick={() => void releaseBusyTable()}
-                >
-                  Liberar mesa
-                </button>
-              </div>
-            </section>
-          </div>
-        </main>
-      </>
-    )
 
   /* --- Vista: registrar/editar pedido --- */
   if (selected)
@@ -499,6 +390,68 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
           </div>
         </section>
       </main>
+      {busyTable && (
+        <div className={styles.modalBackdrop} onClick={closeBusyTable}>
+          <section
+            className={styles.tableModal}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="busy-table-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <header>
+              <h2 id="busy-table-title">Mesa {busyTable.table.code}</h2>
+              <button
+                className={styles.modalClose}
+                onClick={closeBusyTable}
+                aria-label="Cerrar"
+              >
+                x
+              </button>
+              <p>Detalle de lo que está consumiendo la mesa.</p>
+            </header>
+            <div className={styles.modalTotal}>
+              <span>Consumo total</span>
+              <strong>{money(Number(busyTable.order.total))}</strong>
+            </div>
+            <article className={styles.modalOrder}>
+              <div className={styles.modalOrderHeader}>
+                <strong>#{String(busyTable.order.id).padStart(3, '0')}</strong>
+                <span>
+                  {busyTable.order.status === 'SERVED'
+                    ? 'Servido'
+                    : busyTable.order.status}
+                </span>
+              </div>
+              {busyTable.order.customer_name && (
+                <small>Cliente: {busyTable.order.customer_name}</small>
+              )}
+              {busyTable.order.items.map((item) => (
+                <div className={styles.modalItem} key={item.product_id}>
+                  <strong>{item.quantity}x</strong>
+                  <span>{item.product_name}</span>
+                  <span>{money(Number(item.line_total))}</span>
+                </div>
+              ))}
+              <div className={styles.modalSubtotal}>
+                <span>Subtotal</span>
+                <strong>{money(Number(busyTable.order.total))}</strong>
+              </div>
+            </article>
+            <div className={styles.modalActions}>
+              <button onClick={editBusyOrder}>
+                + &nbsp;Agregar pedido a esta mesa
+              </button>
+              <button
+                className={styles.releaseButton}
+                onClick={() => void releaseBusyTable()}
+              >
+                Liberar mesa
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
       {orderSuccessTable && (
         <div
           className={styles.modalBackdrop}
