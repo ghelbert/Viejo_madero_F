@@ -5,6 +5,16 @@ import type { Role } from '../../types/role'
 import { money, roleLabel } from '../../utils/format'
 import { Header } from '../../components/Header'
 
+const usernamePrefix = (role: string) => role.slice(0, 2).toUpperCase()
+const duplicateUsernameMessage = 'Ese nombre de usuario ya está registrado.'
+
+const usernameWithoutPrefix = (username: string, role: string) => {
+  const prefix = usernamePrefix(role)
+  return username.toUpperCase().startsWith(prefix)
+    ? username.slice(prefix.length)
+    : username
+}
+
 export function Admin({ user, onLogout }: { user: User; onLogout: () => void }) {
   const [users, setUsers] = useState<Array<User & { active: boolean }>>([])
   const [orders, setOrders] = useState<Order[]>([])
@@ -12,6 +22,8 @@ export function Admin({ user, onLogout }: { user: User; onLogout: () => void }) 
   const [categories, setCategories] = useState<Array<{ id: number; name: string }>>([])
   const [tab, setTab] = useState<'Resumen' | 'Carta' | 'Empleados'>('Resumen')
   const [error, setError] = useState('')
+  const [usernameError, setUsernameError] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
   const [showProductForm, setShowProductForm] = useState(false)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [showUserForm, setShowUserForm] = useState(false)
@@ -89,8 +101,34 @@ export function Admin({ user, onLogout }: { user: User; onLogout: () => void }) 
 
   const createUser = async (event: React.FormEvent) => {
     event.preventDefault()
-    if (editingUser) await api.updateUser(editingUser.id, userForm)
-    else await api.createUser(userForm)
+    setError('')
+    setUsernameError('')
+    const data = {
+      ...userForm,
+      username: `${usernamePrefix(userForm.role)}${userForm.username.trim()}`,
+    }
+    const usernameTaken = users.some(
+      (item) => item.username === data.username && item.id !== editingUser?.id,
+    )
+    if (usernameTaken) {
+      setUsernameError(duplicateUsernameMessage)
+      return
+    }
+    try {
+      if (editingUser) await api.updateUser(editingUser.id, data)
+      else {
+        await api.createUser(data)
+        setSuccessMessage('Empleado creado correctamente.')
+      }
+    } catch (saveError) {
+      const message =
+        saveError instanceof Error
+          ? saveError.message
+          : 'No se pudo guardar el empleado.'
+      if (message === duplicateUsernameMessage) setUsernameError(message)
+      else setError(message)
+      return
+    }
     setEditingUser(null)
     setUserForm({ fullName: '', username: '', password: '', role: 'MOZO' })
     setShowUserForm(false)
@@ -115,7 +153,10 @@ export function Admin({ user, onLogout }: { user: User; onLogout: () => void }) 
         },
         editingProduct.available !== false,
       )
-    else await api.createProduct(data)
+    else {
+      await api.createProduct(data)
+      setSuccessMessage('Plato creado correctamente.')
+    }
     setEditingProduct(null)
     setProductForm((current) => ({
       ...current,
@@ -353,9 +394,18 @@ export function Admin({ user, onLogout }: { user: User; onLogout: () => void }) 
                 />
                 <input
                   placeholder="Usuario"
-                  value={userForm.username}
+                  value={`${usernamePrefix(userForm.role)}${userForm.username}`}
                   onChange={(event) =>
-                    setUserForm({ ...userForm, username: event.target.value })
+                    {
+                      setUsernameError('')
+                      setUserForm({
+                        ...userForm,
+                        username: usernameWithoutPrefix(
+                          event.target.value,
+                          userForm.role,
+                        ),
+                      })
+                    }
                   }
                   required
                 />
@@ -373,7 +423,10 @@ export function Admin({ user, onLogout }: { user: User; onLogout: () => void }) 
                 <select
                   value={userForm.role}
                   onChange={(event) =>
-                    setUserForm({ ...userForm, role: event.target.value })
+                    {
+                      setUsernameError('')
+                      setUserForm({ ...userForm, role: event.target.value })
+                    }
                   }
                 >
                   <option value="MOZO">Mozo</option>
@@ -409,7 +462,10 @@ export function Admin({ user, onLogout }: { user: User; onLogout: () => void }) 
                             setEditingUser(item)
                             setUserForm({
                               fullName: item.full_name,
-                              username: item.username,
+                              username: usernameWithoutPrefix(
+                                item.username,
+                                item.role,
+                              ),
                               password: '',
                               role: item.role,
                             })
@@ -435,6 +491,50 @@ export function Admin({ user, onLogout }: { user: User; onLogout: () => void }) 
           </section>
         )}
       </main>
+      {usernameError && (
+        <div
+          className={styles.modalBackdrop}
+          onClick={() => setUsernameError('')}
+        >
+          <section
+            className={styles.tableModal}
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="duplicate-username-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <header>
+              <h2 id="duplicate-username-title">Nombre de usuario en uso</h2>
+              <p>{usernameError}</p>
+            </header>
+            <div className={styles.modalActions}>
+              <button onClick={() => setUsernameError('')}>Aceptar</button>
+            </div>
+          </section>
+        </div>
+      )}
+      {successMessage && (
+        <div
+          className={styles.modalBackdrop}
+          onClick={() => setSuccessMessage('')}
+        >
+          <section
+            className={styles.tableModal}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="admin-success-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <header>
+              <h2 id="admin-success-title">Guardado correctamente</h2>
+              <p>{successMessage}</p>
+            </header>
+            <div className={styles.modalActions}>
+              <button onClick={() => setSuccessMessage('')}>Aceptar</button>
+            </div>
+          </section>
+        </div>
+      )}
     </>
   )
 }

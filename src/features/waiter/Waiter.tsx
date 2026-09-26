@@ -20,6 +20,7 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
   const [readyItems, setReadyItems] = useState<Record<number, OrderItem[]>>({})
   const [selected, setSelected] = useState<Table | null>(null)
   const [busyTable, setBusyTable] = useState<TableDetail | null>(null)
+  const [orderSuccessTable, setOrderSuccessTable] = useState<string | null>(null)
   const [editingOrderId, setEditingOrderId] = useState<number | null>(null)
   const [cart, setCart] = useState<Cart>({})
   const [customerName, setCustomerName] = useState('')
@@ -104,12 +105,11 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
     try {
       if (editingOrderId)
         await api.updateOrderItems(editingOrderId, customerName.trim(), items)
-      else await api.createOrder(selected.id, user.id, customerName.trim(), items)
-      setMessage(
-        editingOrderId
-          ? `Pedido de mesa ${selected.code} actualizado.`
-          : `Pedido registrado en mesa ${selected.code} y listo para confirmar.`,
-      )
+      else {
+        await api.createOrder(selected.id, user.id, customerName.trim(), items)
+        setOrderSuccessTable(selected.code)
+      }
+      if (editingOrderId) setMessage(`Pedido de mesa ${selected.code} actualizado.`)
     } catch (saveError) {
       setMessage(
         saveError instanceof Error
@@ -499,6 +499,28 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
           </div>
         </section>
       </main>
+      {orderSuccessTable && (
+        <div
+          className={styles.modalBackdrop}
+          onClick={() => setOrderSuccessTable(null)}
+        >
+          <section
+            className={styles.tableModal}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="order-success-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <header>
+              <h2 id="order-success-title">Pedido registrado</h2>
+              <p>El pedido de la mesa {orderSuccessTable} se registró correctamente.</p>
+            </header>
+            <div className={styles.modalActions}>
+              <button onClick={() => setOrderSuccessTable(null)}>Aceptar</button>
+            </div>
+          </section>
+        </div>
+      )}
     </>
   )
 }
