@@ -84,6 +84,14 @@
   border: 1px solid #dccfbe;
   border-radius: 8px;
   background: #fffaf4;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  animation: waiterItemEnter 380ms cubic-bezier(.2, .75, .25, 1) both;
+}
+
+.readyOrderCard:hover {
+  border-color: #c9ad92;
+  box-shadow: 0 5px 14px rgba(93, 61, 43, .09);
+  transform: translateY(-2px);
 }
 
 .readyOrderHeader {
@@ -181,7 +189,14 @@
   background: #fffaf4;
   cursor: pointer;
   transition: border-color .2s, box-shadow .2s, transform .2s;
+  animation: waiterItemEnter 380ms cubic-bezier(.2, .75, .25, 1) both;
 }
+
+.waiterTableCard:nth-child(2) { animation-delay: 35ms; }
+.waiterTableCard:nth-child(3) { animation-delay: 70ms; }
+.waiterTableCard:nth-child(4) { animation-delay: 105ms; }
+.waiterTableCard:nth-child(5) { animation-delay: 140ms; }
+.waiterTableCard:nth-child(6) { animation-delay: 175ms; }
 
 .waiterTableCard:hover {
   border-color: #a9795a;
@@ -342,6 +357,8 @@
   transform: translateY(-1px);
 }
 
+.menuItem:active { transform: scale(.995); }
+
 .menuItem span,
 .menuItem strong,
 .menuItem small {
@@ -478,6 +495,25 @@
 .submitOrderButton:hover {
   background: #5e3b27;
   transform: translateY(-1px);
+}
+
+.waiterContent,
+.orderContent {
+  animation: waiterPageEnter 320ms ease-out both;
+}
+
+.cartItem {
+  animation: waiterItemEnter 200ms ease-out both;
+}
+
+@keyframes waiterPageEnter {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes waiterItemEnter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 720px) {

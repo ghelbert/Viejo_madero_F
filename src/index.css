@@ -4,6 +4,9 @@
   font-family: 'DM Sans', sans-serif;
   color: #202824;
   background: #f7f7f4;
+  --motion-fast: 160ms;
+  --motion-standard: 240ms;
+  --motion-ease: cubic-bezier(.2, .75, .25, 1);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -14,3 +17,17 @@
 body { margin: 0; min-width: 320px; min-height: 100vh; }
 button { -webkit-tap-highlight-color: transparent; }
 button, input, select { font: inherit; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid #d67b2b;
+  outline-offset: 3px;
+}
+button:not(:disabled):active { transform: translateY(1px) scale(.985); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}

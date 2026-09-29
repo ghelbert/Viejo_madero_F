@@ -414,3 +414,34 @@
     color: #b6482e;
     font-size: 12px;
 }
+
+.loginShell {
+    animation: loginEnter 480ms cubic-bezier(.2, .75, .25, 1) both;
+}
+
+.loginStory .storyContent {
+    animation: loginContentEnter 620ms cubic-bezier(.2, .75, .25, 1) both;
+}
+
+.loginFormWrap {
+    animation: loginContentEnter 520ms 90ms cubic-bezier(.2, .75, .25, 1) both;
+}
+
+.loginForm input[type='text'],
+.loginForm input[type='password'] {
+    transition: border-color var(--motion-fast) ease, box-shadow var(--motion-fast) ease;
+}
+
+.loginButton:active {
+    transform: translateY(1px) scale(.985);
+}
+
+@keyframes loginEnter {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes loginContentEnter {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}

@@ -1,5 +1,5 @@
-.modalBackdrop { position: fixed; inset: 0; z-index: 5; display: grid; place-items: center; padding: 20px; background: rgba(38, 29, 24, .45); }
-.tableModal { width: min(100%, 460px); overflow: hidden; border: 1px solid #d8ccbd; border-radius: 12px; color: #382a23; background: #fffaf3; box-shadow: 0 18px 45px rgba(38, 29, 24, .25); }
+.modalBackdrop { position: fixed; inset: 0; z-index: 5; display: grid; place-items: center; padding: 20px; background: rgba(38, 29, 24, .45); animation: backdropIn 180ms ease-out both; }
+.tableModal { width: min(100%, 460px); overflow: hidden; border: 1px solid #d8ccbd; border-radius: 12px; color: #382a23; background: #fffaf3; box-shadow: 0 18px 45px rgba(38, 29, 24, .25); animation: modalIn 260ms cubic-bezier(.2, .75, .25, 1) both; }
 .tableModal header { position: relative; padding: 17px 18px 15px; border-bottom: 1px solid #e3d8ca; }
 .tableModal h2 { margin: 0; font: 700 18px 'Playfair Display', serif; }
 .tableModal header p { margin: 6px 0 0; color: #806f63; font-size: 13px; }
@@ -17,3 +17,111 @@
 .modalActions { display: grid; gap: 8px; padding: 15px 18px 18px; }
 .modalActions button { height: 30px; border: 1px solid #d8cabb; border-radius: 6px; color: #382a23; background: #f8f1e7; cursor: pointer; }
 .releaseButton { border: 0 !important; color: #c92e2e !important; background: transparent !important; }
+
+@keyframes backdropIn {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+@keyframes modalIn {
+	from { opacity: 0; transform: translateY(10px) scale(.98); }
+	to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.releaseDialog {
+	width: min(100%, 440px);
+	border-color: #e4c7bd;
+	box-shadow: 0 24px 70px rgba(55, 34, 28, .32);
+}
+
+.releaseHeader {
+	display: flex;
+	align-items: center;
+	gap: 13px;
+	padding-right: 48px !important;
+}
+
+.releaseMark {
+	flex: 0 0 42px;
+	display: grid;
+	place-items: center;
+	width: 42px;
+	height: 42px;
+	border: 1px solid #e6c5ba;
+	border-radius: 50%;
+	color: #a74436;
+	background: #f8e9e4;
+	font-size: 20px;
+	font-weight: 700;
+}
+
+.releaseHeading {
+	min-width: 0;
+}
+
+.releaseEyebrow {
+	color: #a74436;
+	font-size: 10px;
+	font-weight: 700;
+	text-transform: uppercase;
+}
+
+.releaseHeading h2 {
+	margin-top: 4px;
+	font-size: 21px;
+	line-height: 1.2;
+}
+
+.releaseNotice {
+	margin: 16px 18px 0;
+	padding: 12px 14px;
+	border-left: 3px solid #b84c3c;
+	border-radius: 0 7px 7px 0;
+	color: #563b33;
+	background: #f8eee9;
+}
+
+.releaseNotice strong {
+	font-size: 13px;
+}
+
+.releaseNotice p {
+	margin: 5px 0 0;
+	color: #80675e;
+	font-size: 12px;
+	line-height: 1.45;
+}
+
+.releaseActions {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 9px;
+	padding-top: 13px;
+}
+
+.releaseActions button {
+	height: 42px;
+	font-size: 12px;
+	font-weight: 600;
+	transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.releaseActions button:first-child {
+	border-color: #d8cabb;
+	color: #503f35;
+	background: #fffdf9;
+}
+
+.releaseActions button:first-child:hover {
+	background: #f4ecdf;
+}
+
+.releaseActions .releaseConfirmButton {
+	border: 1px solid #a73c30;
+	color: #fffaf7;
+	background: #b84638;
+}
+
+.releaseActions .releaseConfirmButton:hover {
+	border-color: #96372c;
+	background: #a43d31;
+}

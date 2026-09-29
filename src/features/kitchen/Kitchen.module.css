@@ -64,7 +64,19 @@
   background: #fffaf3;
   color: #4a392e;
   font-size: 12px;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  animation: kitchenTicketEnter 320ms cubic-bezier(.2, .75, .25, 1) both;
 }
+
+.kitchenCard:hover {
+  border-color: #c9ad92;
+  box-shadow: 0 5px 14px rgba(93, 61, 43, .09);
+  transform: translateY(-2px);
+}
+
+.kitchenCard:nth-child(2) { animation-delay: 35ms; }
+.kitchenCard:nth-child(3) { animation-delay: 70ms; }
+.kitchenCard:nth-child(4) { animation-delay: 105ms; }
 
 .kitchenCard span {
   color: #8a6b56;
@@ -114,6 +126,29 @@
 
 .kitchenTotal {
   text-align: right;
+}
+
+.kitchenContent {
+  animation: kitchenPageEnter 320ms ease-out both;
+}
+
+.kitchenCard button {
+  transition: background-color 160ms ease, transform 160ms ease;
+}
+
+.kitchenCard button:hover {
+  background: #573722;
+  transform: translateY(-1px);
+}
+
+@keyframes kitchenPageEnter {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes kitchenTicketEnter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 720px) {
