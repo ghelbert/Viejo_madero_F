@@ -237,7 +237,13 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
           </button>
           <div className={styles.orderTitle}>
             <h1>Mesa {selected.code}</h1>
-            <span>{selected.status === 'FREE' ? 'Disponible' : 'Ocupada'}</span>
+            <span>
+              {selected.status === 'FREE'
+                ? 'Disponible'
+                : selected.status === 'ATTENDED'
+                  ? 'Atendido'
+                  : 'Ocupada'}
+            </span>
           </div>
           <label className={styles.customerField}>
             Nombre del cliente
@@ -379,7 +385,11 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
                 </svg></span>
                 <strong>{table.code}</strong>
                 <span className={styles.waiterStatus}>
-                  {table.status === 'FREE' ? 'Libre' : 'Ocupada'}
+                  {table.status === 'FREE'
+                    ? 'Libre'
+                    : table.status === 'ATTENDED'
+                      ? 'Atendido'
+                      : 'Ocupada'}
                 </span>
                 {table.customer_name && (
                   <small className={styles.tableCustomer}>

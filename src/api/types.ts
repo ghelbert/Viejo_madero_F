@@ -10,7 +10,7 @@ export type Table = {
   code: string;
   capacity: number;
   zone: string;
-  status: "FREE" | "OCCUPIED" | "RESERVED" | "CLEANING";
+  status: "FREE" | "OCCUPIED" | "ATTENDED" | "RESERVED" | "CLEANING";
   customer_name?: string;
 };
 
