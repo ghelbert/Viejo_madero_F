@@ -21,6 +21,7 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
   const [readyItems, setReadyItems] = useState<Record<number, OrderItem[]>>({})
   const [selected, setSelected] = useState<Table | null>(null)
   const [busyTable, setBusyTable] = useState<TableDetail | null>(null)
+  const [confirmRelease, setConfirmRelease] = useState(false)
   const [orderSuccessTable, setOrderSuccessTable] = useState<string | null>(null)
   const [editingOrderId, setEditingOrderId] = useState<number | null>(null)
   const [cart, setCart] = useState<Cart>({})
@@ -140,15 +141,10 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
   }
 
   const releaseBusyTable = async () => {
-    if (
-      !busyTable ||
-      !window.confirm(
-        '¿Los clientes se retiraron? La mesa quedará libre y sus pedidos se cerrarán.',
-      )
-    )
-      return
+    if (!busyTable) return
     await api.deleteOrder(busyTable.order.id)
     setBusyTable(null)
+    setConfirmRelease(false)
     setTables(await api.tables())
     setMessage(`Mesa ${busyTable.table.code} liberada`)
   }
@@ -455,10 +451,41 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
               </button>
               <button
                 className={modalStyles.releaseButton}
-                onClick={() => void releaseBusyTable()}
+                onClick={() => setConfirmRelease(true)}
               >
                 Liberar mesa
               </button>
+            </div>
+          </section>
+        </div>
+      )}
+      {confirmRelease && busyTable && (
+        <div
+          className={modalStyles.modalBackdrop}
+          onClick={() => setConfirmRelease(false)}
+        >
+          <section
+            className={modalStyles.tableModal}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="release-table-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <header>
+              <h2 id="release-table-title">¿Liberar mesa {busyTable.table.code}?</h2>
+              <p>
+                ¿Los clientes se retiraron? La mesa quedará libre y sus pedidos
+                se cerrarán.
+              </p>
+            </header>
+            <div className={modalStyles.modalActions}>
+              <button
+                className={modalStyles.releaseButton}
+                onClick={() => void releaseBusyTable()}
+              >
+                Sí, liberar mesa
+              </button>
+              <button onClick={() => setConfirmRelease(false)}>Cancelar</button>
             </div>
           </section>
         </div>

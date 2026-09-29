@@ -30,6 +30,15 @@ export function Kitchen({ user, onLogout }: { user: User; onLogout: () => void }
 
   useEffect(() => {
     void load()
+
+    const refresh = () => void load()
+    const interval = window.setInterval(refresh, 3000)
+    window.addEventListener('focus', refresh)
+
+    return () => {
+      window.clearInterval(interval)
+      window.removeEventListener('focus', refresh)
+    }
   }, [])
 
   const move = async (order: Order, status: string) => {
