@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import styles from './Waiter.module.css'
 import {
   api,
+  subscribeToOrderUpdates,
   type Order,
   type OrderItem,
   type Product,
@@ -42,7 +43,8 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
   }
 
   useEffect(() => {
-    Promise.all([api.tables(), api.products(), loadReadyOrders()])
+    void Promise.resolve()
+      .then(() => Promise.all([api.tables(), api.products(), loadReadyOrders()]))
       .then(([loadedTables, loadedProducts]) => {
         setTables(loadedTables as Table[])
         setProducts(loadedProducts as Product[])
@@ -52,10 +54,10 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
     const refresh = () => {
       void loadReadyOrders().catch((error) => setMessage(error.message))
     }
-    const interval = window.setInterval(refresh, 3000)
+    const unsubscribe = subscribeToOrderUpdates(refresh)
     window.addEventListener('focus', refresh)
     return () => {
-      window.clearInterval(interval)
+      unsubscribe()
       window.removeEventListener('focus', refresh)
     }
   }, [])

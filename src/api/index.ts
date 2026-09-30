@@ -15,3 +15,4 @@ export const api = {
 };
 
 export * from "./types";
+export { subscribeToOrderUpdates } from "./realtime";

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import styles from './Kitchen.module.css'
-import { api, type Order, type OrderItem, type User } from '../../api'
+import { api, subscribeToOrderUpdates, type Order, type OrderItem, type User } from '../../api'
 import { money } from '../../utils/format'
 import { Header } from '../../components/Header'
 
@@ -29,14 +29,14 @@ export function Kitchen({ user, onLogout }: { user: User; onLogout: () => void }
   }
 
   useEffect(() => {
-    void load()
+    void Promise.resolve().then(load)
 
     const refresh = () => void load()
-    const interval = window.setInterval(refresh, 3000)
+    const unsubscribe = subscribeToOrderUpdates(refresh)
     window.addEventListener('focus', refresh)
 
     return () => {
-      window.clearInterval(interval)
+      unsubscribe()
       window.removeEventListener('focus', refresh)
     }
   }, [])
