@@ -442,25 +442,53 @@ export function Admin({ user, onLogout }: { user: User; onLogout: () => void }) 
               </form>
             )}
             <div className={styles.adminTableWrap}>
-              <table className={styles.adminTable}>
+              <table className={`${styles.adminTable} ${styles.usersTable}`}>
                 <thead>
                   <tr>
-                    <th>Nombre</th>
+                    <th>Empleado</th>
                     <th>Usuario</th>
                     <th>Rol</th>
                     <th>Estado</th>
-                    <th></th>
+                    <th>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
                   {users.map((item) => (
                     <tr key={item.id}>
-                      <th>{item.full_name}</th>
-                      <td>{item.username}</td>
-                      <td>{roleLabel[item.role as Role] ?? item.role}</td>
-                      <td>{item.active ? 'Activo' : 'Inactivo'}</td>
+                      <th>
+                        <span className={styles.employeeIdentity}>
+                          <span className={styles.employeeAvatar} aria-hidden="true">
+                            {item.full_name.trim().slice(0, 1).toUpperCase()}
+                          </span>
+                          <span className={styles.employeeName}>{item.full_name}</span>
+                        </span>
+                      </th>
+                      <td>
+                        <code className={styles.usernameBadge}>{item.username}</code>
+                      </td>
+                      <td>
+                        <span
+                          className={styles.roleBadge}
+                          data-role={item.role}
+                        >
+                          {roleLabel[item.role as Role] ?? item.role}
+                        </span>
+                      </td>
+                      <td>
+                        <span
+                          className={styles.userStatus}
+                          data-active={item.active}
+                        >
+                          <span aria-hidden="true" />
+                          {item.active ? 'Activo' : 'Inactivo'}
+                        </span>
+                      </td>
                       <td>
                         <button
+                          className={styles.userIconButton}
+                          type="button"
+                          aria-label={`Editar a ${item.full_name}`}
+                          title={`Editar a ${item.full_name}`}
                           onClick={() => {
                             setEditingUser(item)
                             setUserForm({
@@ -475,15 +503,23 @@ export function Admin({ user, onLogout }: { user: User; onLogout: () => void }) 
                             setShowUserForm(true)
                           }}
                         >
-                          Editar
-                        </button>{' '}
+                          <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="m14 5 5 5M4 20l4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20Z" />
+                          </svg>
+                        </button>
                         <button
+                          className={styles.userIconButton}
+                          type="button"
+                          aria-label={`${item.active ? 'Desactivar' : 'Activar'} a ${item.full_name}`}
+                          title={`${item.active ? 'Desactivar' : 'Activar'} empleado`}
                           onClick={async () => {
                             await api.toggleUser(item.id, !item.active)
                             await load()
                           }}
                         >
-                          {item.active ? 'Desactivar' : 'Activar'}
+                          <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 3v9m5.7-5.7a8 8 0 1 1-11.4 0" />
+                          </svg>
                         </button>
                       </td>
                     </tr>
