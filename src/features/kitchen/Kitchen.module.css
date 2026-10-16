@@ -112,8 +112,20 @@
 
 .kitchenItem {
   display: grid;
-  grid-template-columns: 25px 1fr 0.24fr;
+  grid-template-columns: 25px minmax(0, 1fr) auto;
   gap: 6px;
+}
+
+.itemNote {
+  grid-column: 2 / -1;
+  color: #806b5d;
+}
+
+.emptyColumn {
+  margin: 15px 0 6px;
+  color: #806b5d;
+  font-size: 12px;
+  text-align: center;
 }
 
 .kitchenItem strong {

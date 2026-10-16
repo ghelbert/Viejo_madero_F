@@ -432,6 +432,8 @@ export function Admin({ user, onLogout }: { user: User; onLogout: () => void }) 
                 >
                   <option value="MOZO">Mozo</option>
                   <option value="COCINERO">Cocinero</option>
+                  <option value="RECEPCIONISTA">Recepcionista</option>
+                  <option value="REPARTIDOR">Repartidor</option>
                   <option value="ADMINISTRADOR">Administrador</option>
                 </select>
                 <button className={styles.adminActionButton}>

@@ -6,4 +6,6 @@ export const roleLabel: Record<Role, string> = {
   ADMINISTRADOR: 'Administrador',
   MOZO: 'Mozo',
   COCINERO: 'Cocinero',
+  RECEPCIONISTA: 'Recepcionista',
+  REPARTIDOR: 'Repartidor',
 }

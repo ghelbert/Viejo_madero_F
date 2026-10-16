@@ -47,6 +47,16 @@ export default defineConfig([
 
 ```
 
+## Restaurant workflows
+
+The application routes users by role: `MOZO` manages dining-room tables and orders, `COCINERO`
+updates kitchen tickets, `RECEPCIONISTA` registers delivery/takeaway orders, and `REPARTIDOR`
+manages active routes and delivery history. Administrators can create users for these roles.
+
+Delivery orders support Yape, Plin, or cash payment, customer contact details, delivery notes,
+and coordinates. The interactive map is loaded from OpenStreetMap only after the user explicitly
+requests it; reception can place or drag the delivery pin on the map.
+
 You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
 
 ```js

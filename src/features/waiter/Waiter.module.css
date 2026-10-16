@@ -292,6 +292,21 @@
   font-weight: 700;
 }
 
+.orderTitle .salonLabel {
+  color: #5c493a;
+  background: #e9e0d3;
+}
+
+.menuCategory + .menuCategory {
+  margin-top: 15px;
+}
+
+.menuCategory h2 {
+  margin: 0 0 9px;
+  color: #60432f;
+  font: 700 17px 'Playfair Display', serif;
+}
+
 .customerField {
   display: grid;
   gap: 7px;
@@ -424,6 +439,12 @@
 .cartItem span {
   color: #9a6a4d;
   font-weight: 700;
+}
+
+.cartItem small {
+  grid-column: 2 / 3;
+  color: #806b5d;
+  font-size: 11px;
 }
 
 .cartItem b {

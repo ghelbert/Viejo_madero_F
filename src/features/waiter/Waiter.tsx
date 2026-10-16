@@ -23,7 +23,11 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
   const [selected, setSelected] = useState<Table | null>(null)
   const [busyTable, setBusyTable] = useState<TableDetail | null>(null)
   const [confirmRelease, setConfirmRelease] = useState(false)
-  const [orderSuccessTable, setOrderSuccessTable] = useState<string | null>(null)
+  const [orderSuccessTable, setOrderSuccessTable] = useState<{
+    table: string
+    customer: string
+    code: string
+  } | null>(null)
   const [editingOrderId, setEditingOrderId] = useState<number | null>(null)
   const [cart, setCart] = useState<Cart>({})
   const [customerName, setCustomerName] = useState('')
@@ -32,7 +36,7 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
   const [message, setMessage] = useState('')
 
   const loadReadyOrders = async () => {
-    const orders = await api.orders('READY')
+    const orders = await api.orders('READY', 'DINE_IN')
     const details = await Promise.all(
       orders.map((order) => api.orderDetail(order.id)),
     )
@@ -52,7 +56,8 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
       .catch((error) => setMessage(error.message))
 
     const refresh = () => {
-      void loadReadyOrders().catch((error) => setMessage(error.message))
+      void Promise.all([loadReadyOrders(), api.tables().then(setTables)])
+        .catch((error) => setMessage(error.message))
     }
     const unsubscribe = subscribeToOrderUpdates(refresh)
     window.addEventListener('focus', refresh)
@@ -63,6 +68,11 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
   }, [])
 
   const add = (id: number) => {
+    if (!customerName.trim()) {
+      setCustomerNameError('Ingresa el nombre del cliente antes de agregar platos.')
+      setCartError('')
+      return
+    }
     setCart((current) => ({ ...current, [id]: (current[id] ?? 0) + 1 }))
     setCartError('')
   }
@@ -83,6 +93,11 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
     })
 
   const cartProducts = products.filter((product) => cart[product.id])
+  const groupedProducts = products.reduce<Record<string, Product[]>>((groups, product) => {
+    const category = product.category || 'Otros'
+    groups[category] = [...(groups[category] ?? []), product]
+    return groups
+  }, {})
   const total = cartProducts.reduce(
     (sum, product) => sum + Number(product.base_price) * cart[product.id],
     0,
@@ -110,8 +125,12 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
       if (editingOrderId)
         await api.updateOrderItems(editingOrderId, customerName.trim(), items)
       else {
-        await api.createOrder(selected.id, user.id, customerName.trim(), items)
-        setOrderSuccessTable(selected.code)
+        const created = await api.createOrder(selected.id, user.id, customerName.trim(), items)
+        setOrderSuccessTable({
+          table: selected.code,
+          customer: customerName.trim(),
+          code: created.code,
+        })
       }
       if (editingOrderId) setMessage(`Pedido de mesa ${selected.code} actualizado.`)
     } catch (saveError) {
@@ -126,21 +145,27 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
     setCustomerName('')
     setEditingOrderId(null)
     setSelected(null)
-    setTables(await api.tables())
+    try {
+      setTables(await api.tables())
+    } catch (refreshError) {
+      setMessage(
+        refreshError instanceof Error
+          ? `Pedido guardado, pero no se pudo actualizar el estado de las mesas: ${refreshError.message}`
+          : 'Pedido guardado, pero no se pudo actualizar el estado de las mesas.',
+      )
+    }
   }
 
   const editBusyOrder = () => {
     if (!busyTable) return
-    const isServed = busyTable.order.status === 'SERVED'
+    if (!['OPEN', 'CONFIRMED'].includes(busyTable.order.status)) return
     setSelected(busyTable.table)
     setBusyTable(null)
-    setEditingOrderId(isServed ? null : busyTable.order.id)
+    setEditingOrderId(busyTable.order.id)
     setCustomerName(busyTable.order.customer_name ?? '')
-    setCart(isServed
-      ? {}
-      : Object.fromEntries(
-          busyTable.order.items.map((item) => [item.product_id, item.quantity]),
-        ))
+    setCart(Object.fromEntries(
+      busyTable.order.items.map((item) => [item.product_id, item.quantity]),
+    ))
   }
 
   const releaseBusyTable = async () => {
@@ -236,6 +261,7 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
           </button>
           <div className={styles.orderTitle}>
             <h1>Mesa {selected.code}</h1>
+            <span className={styles.salonLabel}>Salón</span>
             <span>
               {selected.status === 'FREE'
                 ? 'Disponible'
@@ -267,19 +293,24 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
           </label>
           <div className={styles.orderLayout}>
             <div className={styles.menuList}>
-              {products.map((product) => (
-                <button
-                  className={styles.menuItem}
-                  key={product.id}
-                  onClick={() => add(product.id)}
-                >
-                  <span>
-                    <strong>{product.name}</strong>
-                    <small>{product.description}</small>
-                  </span>
-                  <b>{money(Number(product.base_price))}</b>
-                  <em>+</em>
-                </button>
+              {Object.entries(groupedProducts).map(([category, categoryProducts]) => (
+                <section className={styles.menuCategory} key={category}>
+                  <h2>{category}</h2>
+                  {categoryProducts.map((product) => (
+                    <button
+                      className={styles.menuItem}
+                      key={product.id}
+                      onClick={() => add(product.id)}
+                    >
+                      <span>
+                        <strong>{product.name}</strong>
+                        <small>{product.description}</small>
+                      </span>
+                      <b>{money(Number(product.base_price))}</b>
+                      <em>{cart[product.id] ? `${cart[product.id]} · +` : '+'}</em>
+                    </button>
+                  ))}
+                </section>
               ))}
             </div>
             <aside className={styles.cartPanel}>
@@ -311,6 +342,7 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
                       x
                     </button>
                   </div>
+                  <small>{money(Number(product.base_price))} c/u</small>
                   <b>{money(Number(product.base_price) * cart[product.id])}</b>
                 </div>
               ))}
@@ -449,9 +481,9 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
               </div>
             </article>
             <div className={modalStyles.modalActions}>
-              <button onClick={editBusyOrder}>
-                + &nbsp;Agregar pedido a esta mesa
-              </button>
+              {['OPEN', 'CONFIRMED'].includes(busyTable.order.status)
+                ? <button onClick={editBusyOrder}>Editar pedido</button>
+                : <span>Este pedido ya fue enviado a cocina; no se puede modificar.</span>}
               <button
                 className={modalStyles.releaseButton}
                 onClick={() => setConfirmRelease(true)}
@@ -519,10 +551,11 @@ export function Waiter({ user, onLogout }: { user: User; onLogout: () => void })
           >
             <header>
               <h2 id="order-success-title">Pedido registrado</h2>
-              <p>El pedido de la mesa {orderSuccessTable} se registró correctamente.</p>
+              <p>¡Pedido enviado a cocina!</p>
+              <p>{orderSuccessTable.code} · Mesa {orderSuccessTable.table} · Cliente: {orderSuccessTable.customer}</p>
             </header>
             <div className={modalStyles.modalActions}>
-              <button onClick={() => setOrderSuccessTable(null)}>Aceptar</button>
+              <button onClick={() => setOrderSuccessTable(null)}>Volver al inicio</button>
             </div>
           </section>
         </div>

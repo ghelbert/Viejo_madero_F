@@ -1,0 +1,289 @@
+.deliveryContent {
+  max-width: 1050px;
+  margin: 0 auto;
+  padding: 30px 22px 55px;
+  color: #33251d;
+}
+
+.deliveryHeading,
+.cardHeading,
+.cardHeading > div,
+.cardActions,
+.modalActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.deliveryHeading h1 {
+  margin: 0;
+  font: 700 26px 'Playfair Display', serif;
+}
+
+.deliveryHeading p {
+  margin: 6px 0 0;
+  color: #806b5d;
+}
+
+.refresh,
+.secondaryButton {
+  padding: 8px 13px;
+  border: 1px solid #d8cabb;
+  border-radius: 6px;
+  color: #6c432c;
+  background: #fffaf4;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.counters {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin: 23px 0;
+}
+
+.counters article {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border: 1px solid #ded1bf;
+  border-radius: 9px;
+  background: #fffaf4;
+  color: #806b5d;
+}
+
+.counters strong {
+  color: #6c432c;
+  font-size: 25px;
+}
+
+.tabs {
+  display: flex;
+  gap: 5px;
+  border-bottom: 1px solid #ded1bf;
+}
+
+.tabs button {
+  padding: 11px 15px;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  color: #806b5d;
+  background: transparent;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tabs .activeTab {
+  border-bottom-color: #6c432c;
+  color: #6c432c;
+}
+
+.empty {
+  display: grid;
+  min-height: 110px;
+  place-items: center;
+  color: #806b5d;
+}
+
+.orderList {
+  display: grid;
+  gap: 13px;
+  margin-top: 14px;
+}
+
+.orderCard {
+  padding: 17px;
+  border: 1px solid #ded1bf;
+  border-radius: 9px;
+  background: #fffaf4;
+}
+
+.cardHeading > div {
+  justify-content: flex-start;
+}
+
+.cardHeading > div > span {
+  padding: 4px 8px;
+  border-radius: 12px;
+  color: #5b5630;
+  background: #f2ebcc;
+  font-size: 12px;
+}
+
+.cardSummary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin: 12px 0;
+  color: #806b5d;
+  font-size: 13px;
+}
+
+.cardActions {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.cardActions > button:not(.secondaryButton),
+.modalActions > button:last-child {
+  padding: 9px 13px;
+  border: 0;
+  border-radius: 6px;
+  color: #fffaf3;
+  background: #6c432c;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cardActions button:disabled,
+.modalActions button:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
+.assignment {
+  color: #806b5d;
+  font-size: 12px;
+}
+
+.detail {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #e4d8ca;
+}
+
+.detail section {
+  padding: 12px;
+  border: 1px solid #e4d8ca;
+  border-radius: 7px;
+  background: #fcf8f1;
+}
+
+.detail h2 {
+  margin: 0 0 9px;
+  color: #6c432c;
+  font: 700 15px 'Playfair Display', serif;
+}
+
+.detail p {
+  margin: 6px 0;
+  color: #806b5d;
+  font-size: 13px;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 10px;
+  padding: 7px 0;
+  border-bottom: 1px solid #e4d8ca;
+  font-size: 13px;
+}
+
+.item small {
+  grid-column: 1 / -1;
+  color: #806b5d;
+}
+
+.location {
+  grid-column: 1 / -1;
+}
+
+.location .locationMap {
+  height: 260px;
+}
+
+.mapPrompt {
+  display: grid;
+  gap: 8px;
+}
+
+.mapPrompt .secondaryButton {
+  justify-self: start;
+}
+
+.error {
+  padding: 11px 14px;
+  border-radius: 7px;
+  color: #8c3027;
+  background: #fbece9;
+}
+
+.modalBackdrop {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgb(25 18 13 / 55%);
+}
+
+.modal {
+  display: grid;
+  gap: 9px;
+  width: min(100%, 480px);
+  padding: 24px;
+  border: 1px solid #ded1bf;
+  border-radius: 11px;
+  background: #fffaf4;
+  box-shadow: 0 18px 60px rgb(0 0 0 / 20%);
+}
+
+.modal h2 {
+  margin: 0;
+  font: 700 22px 'Playfair Display', serif;
+}
+
+.modal p {
+  margin: 0;
+  color: #806b5d;
+}
+
+.modal label {
+  display: grid;
+  gap: 6px;
+  margin-top: 8px;
+  color: #594638;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.modal textarea {
+  padding: 9px;
+  border: 1px solid #d8cabb;
+  border-radius: 6px;
+  font: inherit;
+  resize: vertical;
+}
+
+.modalActions {
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+@media (max-width: 650px) {
+  .deliveryContent {
+    padding: 24px 15px 40px;
+  }
+
+  .deliveryHeading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .counters,
+  .detail {
+    grid-template-columns: 1fr;
+  }
+
+  .location {
+    grid-column: auto;
+  }
+}
