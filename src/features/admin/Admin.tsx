@@ -6,14 +6,38 @@ import type { Role } from '../../types/role'
 import { money, roleLabel } from '../../utils/format'
 import { Header } from '../../components/Header'
 
-const usernamePrefix = (role: string) => role.slice(0, 2).toUpperCase()
 const duplicateUsernameMessage = 'Ese nombre de usuario ya está registrado.'
 
-const usernameWithoutPrefix = (username: string, role: string) => {
-  const prefix = usernamePrefix(role)
-  return username.toUpperCase().startsWith(prefix)
-    ? username.slice(prefix.length)
-    : username
+const usernameForName = (
+  fullName: string,
+  users: Array<User & { active: boolean }>,
+  excludedUserId?: number,
+) => {
+  const parts = fullName.trim().split(/\s+/)
+  const normalize = (value: string) =>
+    value
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '')
+  const firstName = normalize(parts[0] ?? '')
+  const surname = normalize(parts[1] ?? '')
+  const base = parts.length > 1 ? `${firstName.slice(0, 1)}${surname}` : firstName
+  if (!base) return ''
+
+  let username = base
+  let suffix = 2
+  while (
+    users.some(
+      (item) =>
+        item.id !== excludedUserId &&
+        item.username.toLowerCase() === username.toLowerCase(),
+    )
+  ) {
+    username = `${base}${suffix}`
+    suffix += 1
+  }
+  return username
 }
 
 export function Admin({ user, onLogout }: { user: User; onLogout: () => void }) {
@@ -28,6 +52,7 @@ export function Admin({ user, onLogout }: { user: User; onLogout: () => void }) 
   const [showProductForm, setShowProductForm] = useState(false)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [showUserForm, setShowUserForm] = useState(false)
+  const [showUserPassword, setShowUserPassword] = useState(false)
   const [editingUser, setEditingUser] = useState<(User & { active: boolean }) | null>(null)
   const [productForm, setProductForm] = useState({
     category: '',
@@ -39,9 +64,42 @@ export function Admin({ user, onLogout }: { user: User; onLogout: () => void }) 
   const [userForm, setUserForm] = useState({
     fullName: '',
     username: '',
+    dni: '',
+    phone: '',
     password: '',
-    role: 'MOZO',
+    role: '',
+    active: true,
   })
+
+  const closeUserForm = () => {
+    setShowUserForm(false)
+    setEditingUser(null)
+    setShowUserPassword(false)
+    setUserForm({
+      fullName: '',
+      username: '',
+      dni: '',
+      phone: '',
+      password: '',
+      role: '',
+      active: true,
+    })
+  }
+
+  const openNewUserForm = () => {
+    setEditingUser(null)
+    setShowUserPassword(false)
+    setUserForm({
+      fullName: '',
+      username: '',
+      dni: '',
+      phone: '',
+      password: '',
+      role: '',
+      active: true,
+    })
+    setShowUserForm(true)
+  }
 
   const load = async () => {
     try {
@@ -106,7 +164,10 @@ export function Admin({ user, onLogout }: { user: User; onLogout: () => void }) 
     setUsernameError('')
     const data = {
       ...userForm,
-      username: `${usernamePrefix(userForm.role)}${userForm.username.trim()}`,
+      fullName: userForm.fullName.trim(),
+      username: userForm.username.trim(),
+      dni: userForm.dni,
+      phone: userForm.phone,
     }
     const usernameTaken = users.some(
       (item) => item.username === data.username && item.id !== editingUser?.id,
@@ -119,8 +180,12 @@ export function Admin({ user, onLogout }: { user: User; onLogout: () => void }) 
       if (editingUser) await api.updateUser(editingUser.id, data)
       else {
         await api.createUser(data)
-        setSuccessMessage('Empleado creado correctamente.')
       }
+      setSuccessMessage(
+        editingUser
+          ? 'Empleado actualizado correctamente.'
+          : 'Empleado creado correctamente.',
+      )
     } catch (saveError) {
       const message =
         saveError instanceof Error
@@ -130,9 +195,7 @@ export function Admin({ user, onLogout }: { user: User; onLogout: () => void }) 
       else setError(message)
       return
     }
-    setEditingUser(null)
-    setUserForm({ fullName: '', username: '', password: '', role: 'MOZO' })
-    setShowUserForm(false)
+    closeUserForm()
     await load()
   }
 
@@ -369,78 +432,11 @@ export function Admin({ user, onLogout }: { user: User; onLogout: () => void }) 
               <h2>Empleados y roles</h2>
               <button
                 className={styles.adminActionButton}
-                onClick={() => {
-                  setEditingUser(null)
-                  setUserForm({
-                    fullName: '',
-                    username: '',
-                    password: '',
-                    role: 'MOZO',
-                  })
-                  setShowUserForm((current) => !current)
-                }}
+                onClick={showUserForm ? closeUserForm : openNewUserForm}
               >
                 {showUserForm ? 'Cancelar' : 'Nuevo empleado'}
               </button>
             </div>
-            {showUserForm && (
-              <form className={styles.adminForm} onSubmit={createUser}>
-                <input
-                  placeholder="Nombre completo"
-                  value={userForm.fullName}
-                  onChange={(event) =>
-                    setUserForm({ ...userForm, fullName: event.target.value })
-                  }
-                  required
-                />
-                <input
-                  placeholder="Usuario"
-                  value={`${usernamePrefix(userForm.role)}${userForm.username}`}
-                  onChange={(event) =>
-                    {
-                      setUsernameError('')
-                      setUserForm({
-                        ...userForm,
-                        username: usernameWithoutPrefix(
-                          event.target.value,
-                          userForm.role,
-                        ),
-                      })
-                    }
-                  }
-                  required
-                />
-                <input
-                  type="password"
-                  placeholder={
-                    editingUser ? 'Nueva contraseña (opcional)' : 'Contraseña'
-                  }
-                  value={userForm.password}
-                  onChange={(event) =>
-                    setUserForm({ ...userForm, password: event.target.value })
-                  }
-                  required={!editingUser}
-                />
-                <select
-                  value={userForm.role}
-                  onChange={(event) =>
-                    {
-                      setUsernameError('')
-                      setUserForm({ ...userForm, role: event.target.value })
-                    }
-                  }
-                >
-                  <option value="MOZO">Mozo</option>
-                  <option value="COCINERO">Cocinero</option>
-                  <option value="RECEPCIONISTA">Recepcionista</option>
-                  <option value="REPARTIDOR">Repartidor</option>
-                  <option value="ADMINISTRADOR">Administrador</option>
-                </select>
-                <button className={styles.adminActionButton}>
-                  {editingUser ? 'Guardar cambios' : 'Guardar empleado'}
-                </button>
-              </form>
-            )}
             <div className={styles.adminTableWrap}>
               <table className={`${styles.adminTable} ${styles.usersTable}`}>
                 <thead>
@@ -491,14 +487,15 @@ export function Admin({ user, onLogout }: { user: User; onLogout: () => void }) 
                           title={`Editar a ${item.full_name}`}
                           onClick={() => {
                             setEditingUser(item)
+                            setShowUserPassword(false)
                             setUserForm({
                               fullName: item.full_name,
-                              username: usernameWithoutPrefix(
-                                item.username,
-                                item.role,
-                              ),
+                              username: item.username,
+                              dni: item.dni ?? '',
+                              phone: item.phone ?? '',
                               password: '',
                               role: item.role,
+                              active: item.active,
                             })
                             setShowUserForm(true)
                           }}
@@ -530,25 +527,223 @@ export function Admin({ user, onLogout }: { user: User; onLogout: () => void }) 
           </section>
         )}
       </main>
-      {usernameError && (
+      {showUserForm && (
         <div
-          className={modalStyles.modalBackdrop}
-          onClick={() => setUsernameError('')}
+          className={styles.userFormBackdrop}
+          onClick={(event) => {
+            if (event.target === event.currentTarget) closeUserForm()
+          }}
         >
           <section
-            className={modalStyles.tableModal}
-            role="alertdialog"
+            className={styles.userDialog}
+            role="dialog"
             aria-modal="true"
-            aria-labelledby="duplicate-username-title"
-            onClick={(event) => event.stopPropagation()}
+            aria-labelledby="user-dialog-title"
           >
-            <header>
-              <h2 id="duplicate-username-title">Nombre de usuario en uso</h2>
-              <p>{usernameError}</p>
+            <header className={styles.userDialogHeader}>
+              <div>
+                <h2 id="user-dialog-title">
+                  {editingUser ? 'Modificar empleado' : 'Nuevo empleado'}
+                </h2>
+                <p>
+                  {editingUser
+                    ? 'Actualiza los datos, rol y acceso del empleado.'
+                    : 'Registra un nuevo colaborador con su rol y credenciales de acceso.'}
+                </p>
+              </div>
+              <button
+                type="button"
+                className={styles.userDialogClose}
+                aria-label="Cerrar formulario"
+                onClick={closeUserForm}
+              >
+                ×
+              </button>
             </header>
-            <div className={modalStyles.modalActions}>
-              <button onClick={() => setUsernameError('')}>Aceptar</button>
-            </div>
+            <form className={styles.userForm} onSubmit={createUser}>
+              <label className={styles.userField}>
+                <span>Nombre completo</span>
+                <input
+                  autoFocus
+                  autoComplete="name"
+                  placeholder="Ej: Juan Pérez García"
+                  value={userForm.fullName}
+                  onChange={(event) => {
+                    const fullName = event.target.value
+                    setUsernameError('')
+                    setUserForm((current) => ({
+                      ...current,
+                      fullName,
+                      username: usernameForName(
+                        fullName,
+                        users,
+                        editingUser?.id,
+                      ),
+                    }))
+                  }}
+                  required
+                />
+              </label>
+              <div className={styles.userFormRow}>
+                <label className={styles.userField}>
+                  <span>DNI</span>
+                  <input
+                    autoComplete="off"
+                    inputMode="numeric"
+                    maxLength={8}
+                    pattern="[0-9]{8}"
+                    placeholder="8 dígitos"
+                    value={userForm.dni}
+                    onChange={(event) =>
+                      setUserForm((current) => ({
+                        ...current,
+                        dni: event.target.value.replace(/\D/g, '').slice(0, 8),
+                      }))
+                    }
+                    required={!editingUser}
+                  />
+                </label>
+                <label className={styles.userField}>
+                  <span>Teléfono</span>
+                  <input
+                    autoComplete="tel"
+                    inputMode="numeric"
+                    maxLength={9}
+                    pattern="[0-9]{9}"
+                    placeholder="9 dígitos"
+                    value={userForm.phone}
+                    onChange={(event) =>
+                      setUserForm((current) => ({
+                        ...current,
+                        phone: event.target.value.replace(/\D/g, '').slice(0, 9),
+                      }))
+                    }
+                    required={!editingUser}
+                  />
+                </label>
+              </div>
+              <label className={styles.userField}>
+                <span>
+                  Nombre de usuario
+                  <small>Generado automáticamente</small>
+                </span>
+                <span className={styles.generatedUsername}>
+                  <span aria-hidden="true">@</span>
+                  <input
+                    aria-label="Nombre de usuario generado"
+                    value={userForm.username}
+                    readOnly
+                    required
+                  />
+                </span>
+                <small className={styles.userFieldHint}>
+                  Formato: primera letra del nombre + primer apellido (ej: jperez).
+                </small>
+              </label>
+              <label className={styles.userField}>
+                <span>Rol</span>
+                <select
+                  value={userForm.role}
+                  onChange={(event) => {
+                    setUsernameError('')
+                    setUserForm((current) => ({
+                      ...current,
+                      role: event.target.value,
+                    }))
+                  }}
+                  required
+                >
+                  <option value="" disabled>
+                    Seleccione un rol...
+                  </option>
+                  <option value="MOZO">Mozo</option>
+                  <option value="COCINERO">Cocinero</option>
+                  <option value="RECEPCIONISTA">Recepcionista</option>
+                  <option value="REPARTIDOR">Repartidor</option>
+                  <option value="ADMINISTRADOR">Administrador</option>
+                </select>
+              </label>
+              <label className={styles.userField}>
+                <span>
+                  {editingUser ? 'Nueva contraseña' : 'Contraseña inicial'}
+                  {editingUser && <small>Opcional</small>}
+                </span>
+                <span className={styles.passwordInput}>
+                  <input
+                    autoComplete="new-password"
+                    type={showUserPassword ? 'text' : 'password'}
+                    minLength={6}
+                    placeholder={
+                      editingUser
+                        ? 'Dejar vacío para mantener la actual'
+                        : 'Mínimo 6 caracteres'
+                    }
+                    value={userForm.password}
+                    onChange={(event) =>
+                      setUserForm((current) => ({
+                        ...current,
+                        password: event.target.value,
+                      }))
+                    }
+                    required={!editingUser}
+                  />
+                  <button
+                    type="button"
+                    aria-label={
+                      showUserPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'
+                    }
+                    aria-pressed={showUserPassword}
+                    onClick={() =>
+                      setShowUserPassword((current) => !current)
+                    }
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M2.5 12s3.4-6 9.5-6 9.5 6 9.5 6-3.4 6-9.5 6-9.5-6-9.5-6Z" />
+                      <circle cx="12" cy="12" r="2.5" />
+                    </svg>
+                  </button>
+                </span>
+                <small className={styles.userFieldHint}>
+                  Mínimo 6 caracteres. Comparte la contraseña de manera segura.
+                </small>
+              </label>
+              <label className={styles.userActiveToggle}>
+                <input
+                  type="checkbox"
+                  checked={userForm.active}
+                  onChange={(event) =>
+                    setUserForm((current) => ({
+                      ...current,
+                      active: event.target.checked,
+                    }))
+                  }
+                />
+                <span className={styles.userToggleTrack} aria-hidden="true" />
+                Empleado activo (habilitado para iniciar sesión)
+              </label>
+              {usernameError && (
+                <p className={styles.userFormError} role="alert">
+                  {usernameError}
+                </p>
+              )}
+              {error && (
+                <p className={styles.userFormError} role="alert">
+                  {error}
+                </p>
+              )}
+              <footer className={styles.userDialogFooter}>
+                <button
+                  type="button"
+                  className={styles.userCancelButton}
+                  onClick={closeUserForm}
+                >
+                  Cancelar
+                </button>
+                <button type="submit" className={styles.userSaveButton}>
+                  {editingUser ? 'Guardar cambios' : 'Guardar empleado'}
+                </button>
+              </footer>
+            </form>
           </section>
         </div>
       )}

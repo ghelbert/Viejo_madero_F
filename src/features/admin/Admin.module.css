@@ -511,3 +511,347 @@
     padding-left: 11px;
   }
 }
+
+.userFormBackdrop {
+  position: fixed;
+  z-index: 10;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  padding: 24px 16px;
+  background: rgba(29, 25, 22, .55);
+  animation: userBackdropIn 180ms ease-out both;
+}
+
+.userDialog {
+  width: min(100%, 450px);
+  overflow: hidden;
+  border-radius: 15px;
+  color: #28221e;
+  background: #fff;
+  box-shadow: 0 18px 46px rgba(31, 24, 20, .25);
+  animation: userDialogIn 220ms cubic-bezier(.2, .75, .25, 1) both;
+}
+
+.userDialogHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 21px 21px 17px;
+  border-bottom: 1px solid #e1e4e8;
+}
+
+.userDialogHeader h2 {
+  margin: 0;
+  font: 700 20px/1.25 'Playfair Display', serif;
+}
+
+.userDialogHeader p {
+  max-width: 370px;
+  margin: 4px 0 0;
+  color: #71757b;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.userDialogClose {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  color: #777c81;
+  background: transparent;
+  font-size: 26px;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.userDialogClose:hover {
+  background: #f2f3f4;
+}
+
+.userForm {
+  display: grid;
+  gap: 14px;
+  padding: 17px 21px 0;
+}
+
+.userField {
+  display: grid;
+  min-width: 0;
+  gap: 7px;
+  color: #707983;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.userField > span:first-child {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.userField > span:first-child small {
+  padding: 2px 6px;
+  border: 1px solid #dce0e4;
+  border-radius: 5px;
+  color: #747b82;
+  background: #f7f8f9;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.userField input,
+.userField select {
+  width: 100%;
+  min-width: 0;
+  height: 36px;
+  padding: 0 11px;
+  border: 1px solid #d9dee4;
+  border-radius: 6px;
+  color: #32373c;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.userField input::placeholder {
+  color: #92979d;
+}
+
+.userField input:focus,
+.userField select:focus {
+  border-color: #8aaeda;
+}
+
+.userFormRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.generatedUsername {
+  display: flex;
+  height: 36px;
+  overflow: hidden;
+  align-items: center;
+  border: 1px solid #d9dee4;
+  border-radius: 6px;
+  background: #f8f9fa;
+}
+
+.generatedUsername > span {
+  display: grid;
+  width: 36px;
+  height: 100%;
+  flex: 0 0 36px;
+  place-items: center;
+  border-right: 1px solid #d9dee4;
+  color: #4d5965;
+  font-size: 14px;
+}
+
+.userField .generatedUsername input {
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font-family: Consolas, 'Courier New', monospace;
+}
+
+.userField .generatedUsername input:focus {
+  outline: none;
+}
+
+.userFieldHint {
+  margin-top: -4px;
+  color: #7b8086;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.45;
+}
+
+.passwordInput {
+  display: flex;
+  height: 36px;
+  overflow: hidden;
+  border: 1px solid #d9dee4;
+  border-radius: 6px;
+}
+
+.userField .passwordInput input {
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+}
+
+.passwordInput button {
+  display: grid;
+  width: 38px;
+  flex: 0 0 38px;
+  place-items: center;
+  border: 0;
+  border-left: 1px solid #d9dee4;
+  color: #7a8086;
+  background: #fff;
+  cursor: pointer;
+}
+
+.passwordInput button:hover {
+  background: #f7f8f9;
+}
+
+.passwordInput svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.5;
+}
+
+.userActiveToggle {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #707983;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.userActiveToggle input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.userToggleTrack {
+  position: relative;
+  width: 28px;
+  height: 16px;
+  flex: 0 0 28px;
+  border-radius: 999px;
+  background: #a5abb2;
+  transition: background-color 160ms ease;
+}
+
+.userToggleTrack::after {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  content: '';
+  transition: transform 160ms ease;
+}
+
+.userActiveToggle input:checked + .userToggleTrack {
+  background: #1877f2;
+}
+
+.userActiveToggle input:checked + .userToggleTrack::after {
+  transform: translateX(12px);
+}
+
+.userActiveToggle input:focus-visible + .userToggleTrack {
+  outline: 2px solid #1877f2;
+  outline-offset: 3px;
+}
+
+.userFormError {
+  margin: -5px 0 0;
+  color: #b6482e;
+  font-size: 12px;
+}
+
+.userDialogFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+  margin: 0 -21px;
+  padding: 14px 21px 17px;
+  border-top: 1px solid #e1e4e8;
+  background: #f8f9fa;
+}
+
+.userDialogFooter button {
+  min-height: 36px;
+  padding: 0 17px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.userCancelButton {
+  border: 1px solid #aeb5bd;
+  color: #68727c;
+  background: transparent;
+}
+
+.userCancelButton:hover {
+  background: #eef0f2;
+}
+
+.userDialogFooter .userSaveButton {
+  border: 1px solid #5b351f;
+  color: #fff;
+  background: #5b351f;
+}
+
+.userDialogFooter .userSaveButton:hover {
+  border-color: #432615;
+  background: #432615;
+}
+
+@keyframes userBackdropIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes userDialogIn {
+  from { opacity: 0; transform: translateY(8px) scale(.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 480px) {
+  .userDialogHeader {
+    padding: 18px 17px 14px;
+  }
+
+  .userForm {
+    gap: 12px;
+    padding: 15px 17px 0;
+  }
+
+  .userFormRow {
+    gap: 10px;
+  }
+
+  .userDialogFooter {
+    margin-right: -17px;
+    margin-left: -17px;
+    padding-right: 17px;
+    padding-left: 17px;
+  }
+
+  .userDialogFooter button {
+    padding: 0 13px;
+    font-size: 12px;
+  }
+}

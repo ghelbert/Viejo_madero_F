@@ -3,6 +3,8 @@ export type User = {
   full_name: string;
   username: string;
   role: "ADMINISTRADOR" | "MOZO" | "COCINERO" | "RECEPCIONISTA" | "REPARTIDOR";
+  dni?: string | null;
+  phone?: string | null;
 };
 
 export type Table = {

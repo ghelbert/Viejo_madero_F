@@ -8,6 +8,9 @@ export const usersApi = {
     username: string;
     password: string;
     role: string;
+    dni: string;
+    phone: string;
+    active: boolean;
   }) => request("/users", { method: "POST", body: JSON.stringify(data) }),
   updateUser: (
     id: number,
@@ -16,6 +19,9 @@ export const usersApi = {
       username: string;
       password: string;
       role: string;
+      dni: string;
+      phone: string;
+      active: boolean;
     },
   ) => request(`/users/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
   toggleUser: (id: number, active: boolean) =>
